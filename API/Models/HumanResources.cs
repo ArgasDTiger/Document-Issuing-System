@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Document_Issuing_System.Models;
+namespace API.Models;
 
 public class HumanResources
 {

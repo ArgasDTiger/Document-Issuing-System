@@ -1,10 +1,8 @@
-using Document_Issuing_System.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace Document_Issuing_System.Data;
-
+using API.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
+namespace API.Data;
 
 public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : IdentityDbContext<User>(options)
 {

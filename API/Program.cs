@@ -1,5 +1,5 @@
-using Document_Issuing_System.Data;
-using Document_Issuing_System.Data.Seed;
+using API.Data;
+using API.Data.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,11 +31,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// uncomment when need seeding
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     await Seed.SeedAsync(services);
-// }
+// // uncomment when need seeding
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await Seed.SeedAsync(services);
+}
 
 app.Run();

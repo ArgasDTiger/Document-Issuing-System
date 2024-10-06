@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Document_Issuing_System.Models;
+namespace API.Models;
 
 public class DocumentToUser
 {

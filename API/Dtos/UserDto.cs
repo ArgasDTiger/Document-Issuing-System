@@ -1,4 +1,4 @@
-namespace Document_Issuing_System.Dtos;
+namespace API.Dtos;
 
 public class UserDto
 {

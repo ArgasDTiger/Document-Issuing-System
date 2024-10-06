@@ -1,7 +1,7 @@
-using Document_Issuing_System.Models;
+using API.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace Document_Issuing_System.Data.Seed;
+namespace API.Data.Seed;
 
 public class Seed
 {

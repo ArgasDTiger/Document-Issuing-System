@@ -1,4 +1,4 @@
-namespace Document_Issuing_System.Controllers;
+namespace API.Controllers;
 
 public class AuthController
 {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using Document_Issuing_System.Models;
+using API.Models;
 
 public class User : IdentityUser
 {

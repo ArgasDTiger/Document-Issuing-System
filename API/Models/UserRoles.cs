@@ -1,4 +1,4 @@
-namespace Document_Issuing_System.Models;
+namespace API.Models;
 
 public static class UserRoles
 {
