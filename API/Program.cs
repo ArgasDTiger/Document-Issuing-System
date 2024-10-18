@@ -1,15 +1,24 @@
 using API.Data;
-using API.Data.Seed;
+using API.Extensions;
+using API.Interfaces;
+using API.Repositories;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DocumentDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SQLiteConnection")));
+
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {
         options.Password.RequireDigit = true;
@@ -21,6 +30,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
     .AddEntityFrameworkStores<DocumentDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddSwaggerConfiguration();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -31,11 +42,18 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// // uncomment when need seeding
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await Seed.SeedAsync(services);
-}
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseCors("CorsPolicy");
+
+app.MapControllers();
+
+// uncomment when need seeding
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     await Seed.SeedAsync(services);
+// }
 
 app.Run();
