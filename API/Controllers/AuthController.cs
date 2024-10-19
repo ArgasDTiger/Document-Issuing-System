@@ -1,6 +1,5 @@
 using API.Dtos;
 using API.Helpers;
-using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +11,11 @@ namespace API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
-    private readonly ITokenService _tokenService;
     private readonly SignInManager<User> _signInManager;
 
-    public AuthController(UserManager<User> userManager, ITokenService tokenService, SignInManager<User> signInManager)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
     {
         _userManager = userManager;
-        _tokenService = tokenService;
         _signInManager = signInManager;
     }
     
@@ -39,9 +36,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized(new Response(401, "Invalid credentials"));
         }
-
-        var token = await _tokenService.CreateToken(user);
-
+        
         return new UserDto
         {
             Login = user.UserName,
@@ -49,7 +44,6 @@ public class AuthController : ControllerBase
             MiddleName = user.MiddleName,
             LastName = user.LastName,
             DateOfBirth = user.DateOfBirth,
-            Token = token
         };
     }
 }

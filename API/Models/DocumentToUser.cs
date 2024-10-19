@@ -25,4 +25,8 @@ public class DocumentToUser
     public DateTime ExpectedReceivingDate => RequestDate.AddDays(7);
 
     public DateTime? ReceivedDate { get; set; }
+    
+    [NotMapped]
+    public string Status => ReceivedDate != null ? "Received" :
+        RequestDate != default ? "On process" : "No operations";
 }

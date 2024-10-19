@@ -56,11 +56,16 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId1")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("DocumentToUsers");
                 });
@@ -326,6 +331,10 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("User", null)
+                        .WithMany("Documents")
+                        .HasForeignKey("UserId1");
+
                     b.Navigation("Document");
 
                     b.Navigation("User");
@@ -389,6 +398,11 @@ namespace API.Migrations
                         .HasForeignKey("HumanResourcesId");
 
                     b.Navigation("HumanResources");
+                });
+
+            modelBuilder.Entity("User", b =>
+                {
+                    b.Navigation("Documents");
                 });
 #pragma warning restore 612, 618
         }

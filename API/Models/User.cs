@@ -19,4 +19,6 @@ public class User : IdentityUser
     public Guid? HumanResourcesId { get; set; }
 
     public HumanResources? HumanResources { get; set; }
+    
+    public ICollection<DocumentToUser> Documents { get; set; } = new List<DocumentToUser>();
 }
