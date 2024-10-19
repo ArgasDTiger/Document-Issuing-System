@@ -24,6 +24,7 @@ public class UserService : IUserService
         _documentRepository = documentRepository;
     }
 
+    // TODO among the users shouldnt be admins and employees
     public async Task<IEnumerable<UserDto>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
     {
         var users = await _userRepository.GetAllUsers(sortField, sortDirection, searchString);
