@@ -1,0 +1,51 @@
+<main>
+  <h1>Сторінка адміністратора</h1>
+
+  <h2>Список користувачів</h2>
+  <div class="search-filter">
+    <input type="text" id="searchInput" placeholder="Пошук за логіном або ім'ям" (input)="filterUsers()" />
+    <div>
+      <select id="roleFilter" (change)="filterUsers()">
+        <option value="">Всі ролі</option>
+        <option value="Користувач">Користувач</option>
+        <option value="Працівник">Працівник</option>
+      </select>
+      <select id="departmentFilter" (change)="filterUsers()">
+        <option value="">Всі відділи</option>
+        <option value="HR">Особисті</option>
+        <option value="Фінанси">Фінанси</option>
+      </select>
+    </div>
+  </div>
+
+  <table id="userTable">
+    <thead>
+    <tr>
+      <th>Логін</th>
+      <th>ПІБ</th>
+      <th>Роль</th>
+      <th>Відділ</th>
+      <th>Дії</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.login }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.role }}</td>
+      <td>
+        <select [(ngModel)]="user.department" (change)="changeDepartment(user, $event.target.value)" [disabled]="user.role !== 'Працівник'">
+          <option value="">-</option>
+          <option value="hr">Особисті довідки</option>
+          <option value="finance">Фінанси</option>
+        </select>
+      </td>
+      <td>
+        <button (click)="changeRole(user)">
+          {{ user.role === 'Користувач' ? 'Зробити працівником' : 'Зробити користувачем' }}
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>

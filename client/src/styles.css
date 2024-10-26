@@ -1,0 +1,17 @@
+:root {
+
+  --radius: 4px;
+
+  --accent: #05668d;
+  --accent--rgb: 5, 102, 141;
+  --accent2: #427aa1;
+  --accent2--rgb: 66, 122, 161;
+  --light: #ebf2fa;
+  --light--rgb: 235, 242, 250;
+  --button: #4CAF50;
+  --button--rgb: 76, 175, 80;
+  --second: #679436;
+  --second--rgb: 103, 148, 54;
+  --second2: #a5be00;
+  --second2--rgb: 165, 190, 0;
+}

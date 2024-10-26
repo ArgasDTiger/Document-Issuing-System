@@ -1,0 +1,21 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3332;
+  padding: 10px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: black;
+  background: rgba(var(--accent--rgb), 0.1);
+  border-radius: var(--radius);
+  padding: 0.5em 1em;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  background: rgba(var(--accent--rgb), 0.3);
+  color: white;
+}

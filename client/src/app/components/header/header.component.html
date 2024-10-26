@@ -1,0 +1,16 @@
+<header>
+  <nav class="nav-links">
+    <a routerLink="/">Головна</a>
+    <a routerLink="/employee" class="employee-only hidden" *ngIf="authService.userRole$ | async === 'employee'">
+      Сторінка працівника
+    </a>
+    <a routerLink="/admin" class="admin-only hidden" *ngIf="authService.userRole$ | async === 'admin'">
+      Сторінка адміна
+    </a>
+  </nav>
+  <div class="nav-panel">
+    <button (click)="authService.isLoggedIn$ | async ? onLogout() : null" id="loginBtn">
+      {{ (authService.isLoggedIn$ | async) ? 'Вийти' : 'Увійти' }}
+    </button>
+  </div>
+</header>
