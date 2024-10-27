@@ -5,16 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories;
 
-// TODO make correct abstraction with GenericRepo
-public class DocumentRepository(DocumentDbContext context) : IDocumentRepository
+public class DocumentRepository : BaseRepository<Document>, IDocumentRepository
 {
-    public async Task<List<Document>> GetAllDocuments()
+    private readonly DocumentDbContext _context;
+
+    public DocumentRepository(DocumentDbContext context) : base(context)
     {
-        return await context.Documents.ToListAsync();
+        _context = context;
     }
     
-    public async Task<Document> GetDocumentById(Guid documentId)
-    {
-        return await context.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
-    }
 }

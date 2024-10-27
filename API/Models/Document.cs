@@ -11,7 +11,7 @@ public class Document
     public string Name { get; set; }
 
     [Required]
-    public Guid HumanResourcesId { get; set; }
+    public Guid DepartmentId { get; set; }
 
-    public HumanResources HumanResources { get; set; }
+    public Department Department { get; set; }
 }

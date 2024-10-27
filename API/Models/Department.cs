@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.Models;
 
-public class HumanResources
+public class Department
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -17,4 +17,6 @@ public class HumanResources
     [Required]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
+
+    public ICollection<Document> Documents { get; set; } = new List<Document>();
 }

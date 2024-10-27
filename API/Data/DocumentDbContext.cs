@@ -8,16 +8,16 @@ public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : Id
 {
     public DbSet<Document> Documents { get; set; }
     public DbSet<DocumentToUser> DocumentToUsers { get; set; }
-    public DbSet<HumanResources> HumanResources { get; set; }
+    public DbSet<Department> Departments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Document>()
-            .HasOne(d => d.HumanResources)
-            .WithMany()
-            .HasForeignKey(d => d.HumanResourcesId);
+            .HasOne(d => d.Department)
+            .WithMany(d => d.Documents)
+            .HasForeignKey(d => d.DepartmentId);
 
         modelBuilder.Entity<DocumentToUser>()
             .HasOne(d => d.User)
@@ -30,8 +30,8 @@ public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : Id
             .HasForeignKey(d => d.DocumentId);
         
         modelBuilder.Entity<User>()
-            .HasOne(d => d.HumanResources)
+            .HasOne(d => d.Departments)
             .WithMany()
-            .HasForeignKey(d => d.HumanResourcesId);
+            .HasForeignKey(d => d.DepartmentId);
     }
 }

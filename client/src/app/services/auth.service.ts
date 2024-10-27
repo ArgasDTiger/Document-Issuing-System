@@ -1,23 +1,59 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { User } from '../models/user';
+import { environment } from '../../environments/environment';
+
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-  private userRoleSubject = new BehaviorSubject<string>('');
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
-  isLoggedIn$ = this.isLoggedInSubject.asObservable();
-  userRole$ = this.userRoleSubject.asObservable();
-
-  login(role: string) {
-    this.isLoggedInSubject.next(true);
-    this.userRoleSubject.next(role);
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    this.loadStoredUser();
   }
 
-  logout() {
-    this.isLoggedInSubject.next(false);
-    this.userRoleSubject.next('');
+  private loadStoredUser(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.loadCurrentUser(token).subscribe();
+    }
+  }
+
+  login(credentials: LoginCredentials): Observable<User> {
+    return this.http.post<User>(`${this.baseUrl}/login`, credentials).pipe(
+      tap(user => this.handleAuthSuccess(user))
+    );
+  }
+
+  loadCurrentUser(token: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/current`).pipe(
+      tap(user => this.handleAuthSuccess(user))
+    );
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
+
+  private handleAuthSuccess(user: User): void {
+    if (user?.token) {
+      localStorage.setItem('token', user.token);
+      this.currentUserSubject.next(user);
+    }
   }
 }

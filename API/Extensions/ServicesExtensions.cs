@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using API.Data;
 using API.Helpers;
 using API.Interfaces;
@@ -15,7 +16,11 @@ public static class ServicesExtensions
     public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAutoMapper(typeof(MappingProfiles));
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddDbContext<DocumentDbContext>(options =>
@@ -27,6 +32,8 @@ public static class ServicesExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<ICredentialsGeneratorService, CredentialsGeneratorService>();
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.AddScoped<IDocumentService, DocumentService>();
 
         return services;
     }

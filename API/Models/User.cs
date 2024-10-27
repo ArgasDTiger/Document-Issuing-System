@@ -16,9 +16,9 @@ public class User : IdentityUser
     [Required]
     public DateTime DateOfBirth { get; set; }
     
-    public Guid? HumanResourcesId { get; set; }
+    public Guid? DepartmentId { get; set; }
 
-    public HumanResources? HumanResources { get; set; }
+    public Department? Departments { get; set; }
     
     public ICollection<DocumentToUser> Documents { get; set; } = new List<DocumentToUser>();
 }

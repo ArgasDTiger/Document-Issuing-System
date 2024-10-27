@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {HeaderComponent} from "./components/header/header.component";
+import {Component, inject} from '@angular/core';
+import {Router, RouterOutlet} from '@angular/router';
+import {HeaderComponent} from "./components/layout/header/header.component";
 
 @Component({
   selector: 'app-root',
@@ -10,5 +10,4 @@ import {HeaderComponent} from "./components/header/header.component";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'client';
 }

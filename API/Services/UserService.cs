@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using API.Dtos;
 using API.Interfaces;
 using API.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services;
 
@@ -12,19 +14,22 @@ public class UserService : IUserService
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
-    private readonly IDocumentRepository _documentRepository;
+    private readonly ITokenService _tokenService;
 
-    public UserService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, 
-        IMapper mapper, IUserRepository userRepository, IDocumentRepository documentRepository)
+    public UserService(
+        UserManager<User> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IMapper mapper,
+        IUserRepository userRepository,
+        ITokenService tokenService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _mapper = mapper;
         _userRepository = userRepository;
-        _documentRepository = documentRepository;
+        _tokenService = tokenService;
     }
 
-    // TODO among the users shouldnt be admins and employees
     public async Task<IEnumerable<UserDto>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
     {
         var users = await _userRepository.GetAllUsers(sortField, sortDirection, searchString);
@@ -68,51 +73,19 @@ public class UserService : IUserService
         return result.Succeeded;
     }
 
-    public async Task<bool> RequestDocument(string login, Guid documentId)
+    public async Task<UserDto> GetCurrentUserAsync(ClaimsPrincipal user)
     {
-        var user = await _userManager.FindByNameAsync(login);
-        if (user == null) return false;
+        var email = user.FindFirstValue(ClaimTypes.Email);
+        var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Email == email);
 
-        var existingDocument = await _documentRepository.GetDocumentById(documentId);
-        if (existingDocument == null) return false; // Document doesn't exist in predefined list
-
-        var documentToUser = await _userRepository.GetDocumentToUser(user.Id, documentId);
-        if (documentToUser != null) return false; // Document already requested
-
-        var newDocumentToUser = new DocumentToUser
+        if (appUser == null)
         {
-            UserId = user.Id,
-            DocumentId = existingDocument.Id,
-            RequestDate = DateTime.UtcNow
-        };
+            throw new InvalidOperationException("User was not found.");
+        }
 
-        await _userRepository.AddDocumentToUser(newDocumentToUser);
-        return await _userRepository.SaveAllAsync();
-    }
+        var userDto = _mapper.Map<UserDto>(appUser);
+        userDto.Token = await _tokenService.CreateToken(appUser);
 
-    public async Task<bool> CompleteDocument(string login, Guid documentId)
-    {
-        var user = await _userManager.FindByNameAsync(login);
-        if (user == null) return false;
-
-        var documentToUser = await _userRepository.GetDocumentToUser(user.Id, documentId);
-        
-        if (documentToUser == null || documentToUser.ReceivedDate != null) return false;
-
-        documentToUser.ReceivedDate = DateTime.UtcNow;
-        await _userRepository.UpdateDocumentToUser(documentToUser);
-        return await _userRepository.SaveAllAsync();
-    }
-    
-    public async Task<bool> DeleteDocument(string login, Guid documentId)
-    {
-        var user = await _userManager.FindByNameAsync(login);
-        if (user == null) return false;
-
-        var documentToUser = await _userRepository.GetDocumentToUser(user.Id, documentId);
-        if (documentToUser == null) return false;
-
-        _userRepository.RemoveDocumentToUser(documentToUser);
-        return await _userRepository.SaveAllAsync();
+        return userDto;
     }
 }

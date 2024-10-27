@@ -17,13 +17,37 @@ namespace API.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
 
+            modelBuilder.Entity("API.Models.Department", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departments");
+                });
+
             modelBuilder.Entity("API.Models.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("HumanResourcesId")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -32,7 +56,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HumanResourcesId");
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Documents");
                 });
@@ -68,30 +92,6 @@ namespace API.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("DocumentToUsers");
-                });
-
-            modelBuilder.Entity("API.Models.HumanResources", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HumanResources");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -237,6 +237,9 @@ namespace API.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -246,9 +249,6 @@ namespace API.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("HumanResourcesId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
@@ -294,7 +294,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HumanResourcesId");
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -308,13 +308,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Document", b =>
                 {
-                    b.HasOne("API.Models.HumanResources", "HumanResources")
-                        .WithMany()
-                        .HasForeignKey("HumanResourcesId")
+                    b.HasOne("API.Models.Department", "Department")
+                        .WithMany("Documents")
+                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HumanResources");
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("API.Models.DocumentToUser", b =>
@@ -393,11 +393,16 @@ namespace API.Migrations
 
             modelBuilder.Entity("User", b =>
                 {
-                    b.HasOne("API.Models.HumanResources", "HumanResources")
+                    b.HasOne("API.Models.Department", "Departments")
                         .WithMany()
-                        .HasForeignKey("HumanResourcesId");
+                        .HasForeignKey("DepartmentId");
 
-                    b.Navigation("HumanResources");
+                    b.Navigation("Departments");
+                });
+
+            modelBuilder.Entity("API.Models.Department", b =>
+                {
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("User", b =>

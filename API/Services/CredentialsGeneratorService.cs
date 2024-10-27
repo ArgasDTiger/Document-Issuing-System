@@ -2,6 +2,8 @@ using System.Text;
 using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
+namespace API.Services;
+
 public class CredentialsGeneratorService : ICredentialsGeneratorService
 {
     private readonly UserManager<User> _userManager;
@@ -20,12 +22,11 @@ public class CredentialsGeneratorService : ICredentialsGeneratorService
         string login;
         int randomNumbers;
 
-        // Формуємо логін
         do
         {
             randomNumbers = random.Next(1000, 9999);
             login = $"{transliteratedFirstName.ToLower()}_{transliteratedLastName.ToLower()}_{randomNumbers}";
-        } while (await _userManager.FindByNameAsync(login) != null); // Перевіряємо унікальність логіна
+        } while (await _userManager.FindByNameAsync(login) != null);
 
         return login;
     }

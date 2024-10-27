@@ -1,9 +1,0 @@
-<div class="login">
-  <h2>Вхід в систему</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" id="loginForm">
-    <span class="valid-text" *ngIf="!loginForm.valid" style="display: block;">Помилка якась</span>
-    <input formControlName="username" id="username" placeholder="Логін" required />
-    <input type="password" formControlName="password" id="password" placeholder="Пароль" required />
-    <button type="submit" [disabled]="loginForm.invalid">Увійти</button>
-  </form>
-</div>

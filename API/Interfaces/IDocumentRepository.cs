@@ -2,9 +2,6 @@ using API.Models;
 
 namespace API.Interfaces;
 
-public interface IDocumentRepository
+public interface IDocumentRepository : IBaseRepository<Document>
 {
-    Task<List<Document>> GetAllDocuments();
-    Task<Document> GetDocumentById(Guid documentId);
-
 }

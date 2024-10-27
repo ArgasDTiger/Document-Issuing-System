@@ -19,7 +19,7 @@ public class Seed
         
         await SeedAdmin(userManager);
 
-        await SeedHumanResources(context);
+        await SeedDepartments(context);
         
         await SeedEmployees(userManager);
         
@@ -71,7 +71,7 @@ public class Seed
                 MiddleName = "Сергійович",
                 LastName = "Петренко",
                 DateOfBirth = new DateTime(2002, 4, 5),
-                HumanResourcesId = _locationIssuerId
+                DepartmentId = _locationIssuerId
             },
             new User()
             {
@@ -81,7 +81,7 @@ public class Seed
                 MiddleName = "Петрівна",
                 LastName = "Кравчук",
                 DateOfBirth = new DateTime(2001, 7, 10),
-                HumanResourcesId = _incomeIssuerId
+                DepartmentId = _incomeIssuerId
             }
         };
 
@@ -97,17 +97,17 @@ public class Seed
         
     }
     
-    private static async Task SeedHumanResources(DocumentDbContext context)
+    private static async Task SeedDepartments(DocumentDbContext context)
     {
-        var hrs = new List<HumanResources>()
+        var hrs = new List<Department>()
         {
-            new HumanResources()
+            new Department()
             {
                 Name = "Відділ видачі довідок про місце проживання",
                 Email = "locationissuer@gmail.com",
                 PhoneNumber = "0965685995"
             },
-            new HumanResources()
+            new Department()
             {
                 Name = "Відділ видачі довідок про доходи",
                 Email = "incomeissuer@gmail.com",
@@ -118,7 +118,7 @@ public class Seed
         _locationIssuerId = hrs[0].Id;
         _incomeIssuerId = hrs[1].Id;
 
-        await context.HumanResources.AddRangeAsync(hrs);
+        await context.Departments.AddRangeAsync(hrs);
         await context.SaveChangesAsync();
     }
     
@@ -129,12 +129,12 @@ public class Seed
             new Document()
             {
                 Name = "Довідка про місце проживання",
-                HumanResourcesId = _locationIssuerId ?? Guid.Empty
+                DepartmentId = _locationIssuerId ?? Guid.Empty
             },
             new Document()
             {
                 Name = "Довідка про доходи",
-                HumanResourcesId = _incomeIssuerId ?? Guid.Empty
+                DepartmentId = _incomeIssuerId ?? Guid.Empty
             }
         };
 

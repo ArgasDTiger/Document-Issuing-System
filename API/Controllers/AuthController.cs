@@ -1,5 +1,6 @@
 using API.Dtos;
 using API.Helpers;
+using API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,13 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly IUserService _userService;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IUserService userService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _userService = userService;
     }
     
     [HttpPost("login")]
@@ -45,5 +48,19 @@ public class AuthController : ControllerBase
             LastName = user.LastName,
             DateOfBirth = user.DateOfBirth,
         };
+    }
+    
+    [HttpGet("current")]
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
+    {
+        try
+        {
+            var userDto = await _userService.GetCurrentUserAsync(HttpContext.User);
+            return Ok(userDto);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while processing your request.");
+        }
     }
 }
