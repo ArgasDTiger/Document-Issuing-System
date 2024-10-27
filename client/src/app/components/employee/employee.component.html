@@ -1,0 +1,62 @@
+<main class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-6">Управління документами користувачів</h1>
+
+  <div class="mb-4">
+    <select
+      class="p-2 border rounded"
+      (change)="onSortChange($event)"
+    >
+      <option value="">Сортувати за...</option>
+      <option value="firstName">Ім'ям</option>
+      <option value="requestDate">Датою запиту</option>
+      <option value="status">Статусом</option>
+    </select>
+  </div>
+
+  <table class="min-w-full bg-white">
+    <thead>
+    <tr class="bg-gray-100">
+      <th class="text-left py-3 px-4">Користувач</th>
+      <th class="text-left py-3 px-4">Документ</th>
+      <th class="text-left py-3 px-4">Дата запиту</th>
+      <th class="text-left py-3 px-4">Очікувана дата</th>
+      <th class="text-left py-3 px-4">Статус документів</th>
+      <th class="text-left py-3 px-4">Дії</th>
+    </tr>
+    </thead>
+    <tbody>
+      @for (doc of activeDocuments(); track doc.documentId) {
+        <tr class="border-b">
+          <td class="py-3 px-4">{{ doc.firstName }} {{ doc.lastName }}</td>
+          <td class="py-3 px-4">{{ doc.documentName }}</td>
+          <td class="py-3 px-4">{{ doc.requestDate | date:'short' }}</td>
+          <td class="py-3 px-4">{{ doc.expectedReceivingDate | date:'short' }}</td>
+          <td class="py-3 px-4">
+            @switch (doc.status) {
+              @case ('On process') {
+                <span class="text-orange-500">На опрацюванні</span>
+              }
+              @case ('Received') {
+                <span class="text-green-500">Видано</span>
+              }
+            }
+          </td>
+          <td class="py-3 px-4">
+            @if (doc.status === 'On process') {
+              <button
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                (click)="completeDocument(doc.userLogin, doc.documentId)"
+              >
+                Позначити як видано
+              </button>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="6" class="py-4 text-center">Немає користувачів для відображення</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</main>

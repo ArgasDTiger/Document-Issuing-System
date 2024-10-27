@@ -1,4 +1,4 @@
 export interface CompleteDocument {
-  login: string;
+  userLogin: string;
   documentId: string;
 }

@@ -10,21 +10,39 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 
     public async Task<IEnumerable<User>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
     {
-        var users = _dbSet.AsQueryable();
+        var query = _context.Users
+            .Include(u => u.Documents)
+            .ThenInclude(d => d.Document)
+            .ThenInclude(d => d.Department)
+            .AsQueryable();
 
-        if (!string.IsNullOrEmpty(searchString))
+        if (!string.IsNullOrWhiteSpace(searchString))
         {
-            users = users.Where(u => 
-                (u.FirstName + " " + u.LastName + " " + u.MiddleName).Contains(searchString));
+            var search = searchString.ToLower();
+            query = query.Where(u => 
+                u.FirstName.ToLower().Contains(search) || 
+                u.LastName.ToLower().Contains(search) || 
+                u.Email.ToLower().Contains(search));
         }
 
-        if (!string.IsNullOrEmpty(sortField))
+        if (!string.IsNullOrWhiteSpace(sortField))
         {
-            bool ascending = sortDirection?.ToLower() == "asc";
-            users = ApplySorting(users, sortField, ascending);
+            query = sortField.ToLower() switch
+            {
+                "firstname" => sortDirection == "asc" 
+                    ? query.OrderBy(u => u.FirstName) 
+                    : query.OrderByDescending(u => u.FirstName),
+                "lastname" => sortDirection == "asc" 
+                    ? query.OrderBy(u => u.LastName) 
+                    : query.OrderByDescending(u => u.LastName),
+                "email" => sortDirection == "asc" 
+                    ? query.OrderBy(u => u.Email) 
+                    : query.OrderByDescending(u => u.Email),
+                _ => query.OrderBy(u => u.FirstName)
+            };
         }
 
-        return await users.ToListAsync();
+        return await query.ToListAsync();
     }
 
     public async Task<User> GetUserByIdWithDocuments(string userId)
@@ -58,4 +76,18 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         _context.DocumentToUsers.Remove(documentToUser);
     }
 
+    public async Task<IEnumerable<DocumentToUser>> GetUserDocuments(string userId)
+    {
+        return await _context.DocumentToUsers
+            .Include(d => d.Document)
+            .ThenInclude(doc => doc.Department)
+            .Where(d => d.UserId == userId)
+            .OrderByDescending(d => d.RequestDate)
+            .ToListAsync();
+    }
+
+    public async Task<bool> SaveAllAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
 }

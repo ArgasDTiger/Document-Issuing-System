@@ -1,0 +1,65 @@
+<main>
+  <div class="container">
+    @if (showRecovery()) {
+      <div id="loginRecovery" class="login">
+        <h2>Відновлення паролю</h2>
+        <span>Введіть свою пошту. На неї вам буде надіслано підтвердження відновлення паролю.</span>
+        <form [formGroup]="recoveryForm" (ngSubmit)="onRecoverySubmit()">
+          <input type="email" formControlName="email" placeholder="Пошта" required>
+          @if (errorMessage()) {
+            <span class="valid-text">{{ errorMessage() }}</span>
+          }
+          <button type="submit" [disabled]="recoveryForm.invalid">Надіслати</button>
+        </form>
+      </div>
+    } @else if (showRecoverySuccess()) {
+      <div id="loginRecoverySuccess" class="login">
+        <h2>Відновлення паролю</h2>
+        <span>Введіть новий пароль.</span>
+        <form [formGroup]="newPasswordForm" (ngSubmit)="onNewPasswordSubmit()">
+          <div>
+            <input [type]="showPassword() ? 'text' : 'password'"
+                   formControlName="password"
+                   placeholder="Пароль"
+                   required>
+            <span class="material-symbols-rounded"
+                  (click)="togglePassword()">
+                  {{ showPassword() ? 'password_2_off' : 'password' }}
+                </span>
+          </div>
+          @if (errorMessage()) {
+            <span class="valid-text">{{ errorMessage() }}</span>
+          }
+          <button type="submit" [disabled]="newPasswordForm.invalid">Змінити</button>
+          @if (successMessage()) {
+            <span class="valid-text success">{{ successMessage() }}</span>
+          }
+        </form>
+      </div>
+    } @else {
+      <div class="login">
+        <h2>Вхід в систему</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+          @if (errorMessage()) {
+            <span class="valid-text">{{ errorMessage() }}</span>
+          }
+          <input type="text" formControlName="userLogin" placeholder="Логін" required>
+          <div>
+            <input [type]="showPassword() ? 'text' : 'password'"
+                   formControlName="password"
+                   placeholder="Пароль"
+                   required>
+            <span class="material-symbols-rounded"
+                  (click)="togglePassword()">
+                  {{ showPassword() ? 'password_2_off' : 'password' }}
+                </span>
+          </div>
+          <div>
+            <button type="submit" [disabled]="loginForm.invalid">Увійти</button>
+            <a (click)="showRecovery.set(true)">Забули пароль?</a>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</main>

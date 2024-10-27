@@ -2,6 +2,6 @@ namespace API.Dtos;
 
 public class DocumentCompleteDto
 {
-    public string Login { get; set; }
+    public string UserLogin { get; set; }
     public Guid DocumentId { get; set; }
 }

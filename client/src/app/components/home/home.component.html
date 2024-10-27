@@ -1,0 +1,36 @@
+<main>
+  <div class="container">
+    @if (!isLoggedIn()) {
+      <div class="info">
+        <h1>Система запиту документів</h1>
+        <p>Ласкаво просимо до нашої системи запиту документів. Тут ви можете зручно замовити необхідні вам документи з різних відділів нашої організації.</p>
+        <p>Для отримання доступу до системи, будь ласка, увійдіть у свій обліковий запис.</p>
+      </div>
+    } @else {
+      <h2>Виберіть відділ:</h2>
+      <div class="mainpage-offices">
+        @for (department of departments(); track department.id) {
+          <app-department-card
+            [department]="department"
+            (selected)="onDepartmentSelect($event)"
+          />
+        }
+      </div>
+
+      @if (selectedDepartment()) {
+        <app-document-list
+          [department]="selectedDepartment()"
+          (documentRequested)="onDocumentRequest($event)"
+        />
+      }
+
+      @if (notification()) {
+        <div class="notification">
+          Дякуємо, документи на опрацюванні, очікуйте.<br>
+          Дата подання заявки: {{ requestDate() }}<br>
+          Очікувана дата отримання: {{ expectedDate() }}
+        </div>
+      }
+    }
+  </div>
+</main>

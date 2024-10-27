@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { environment } from '../../environments/environment';
+import {AbstractControl, ValidationErrors, ɵElement, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
 
 interface LoginCredentials {
   username: string;
@@ -32,7 +33,23 @@ export class AuthService {
     }
   }
 
-  login(credentials: LoginCredentials): Observable<User> {
+    login(credentials: ɵTypedOrUntyped<{
+        [K in keyof {
+            password: (string | ((control: AbstractControl) => (ValidationErrors | null)))[];
+            username: (string | ((control: AbstractControl) => (ValidationErrors | null)))[]
+        }]: ɵElement<{
+            password: (string | ((control: AbstractControl) => (ValidationErrors | null)))[];
+            username: (string | ((control: AbstractControl) => (ValidationErrors | null)))[]
+        }[K], null>
+    }, ɵFormGroupValue<{
+        [K in keyof {
+            password: (string | ((control: AbstractControl) => (ValidationErrors | null)))[];
+            username: (string | ((control: AbstractControl) => (ValidationErrors | null)))[]
+        }]: ɵElement<{
+            password: (string | ((control: AbstractControl) => (ValidationErrors | null)))[];
+            username: (string | ((control: AbstractControl) => (ValidationErrors | null)))[]
+        }[K], null>
+    }>, any>): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/login`, credentials).pipe(
       tap(user => this.handleAuthSuccess(user))
     );

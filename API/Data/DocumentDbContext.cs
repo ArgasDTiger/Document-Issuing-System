@@ -21,7 +21,7 @@ public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : Id
 
         modelBuilder.Entity<DocumentToUser>()
             .HasOne(d => d.User)
-            .WithMany()
+            .WithMany(u => u.Documents)
             .HasForeignKey(d => d.UserId);
 
         modelBuilder.Entity<DocumentToUser>()

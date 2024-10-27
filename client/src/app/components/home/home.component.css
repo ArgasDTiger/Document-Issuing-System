@@ -1,39 +1,30 @@
 .container {
   display: flex;
   justify-content: space-between;
+  max-width: 800px;
+  width: fit-content;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-.info, .login {
+.container:not(:has(.info)) {
+  flex-direction: column;
+  max-width: 300px;
+}
+
+.container:has(.info) :is(.info, .login) {
   width: 45%;
 }
 
-.mainpage-offices {
-  display: flex;
-  gap: 1em;
-}
-
-.mainpage-office {
-  background: none;
-  border: 2px solid rgba(var(--button--rgb), 0.5);
-  border-radius: 8px;
-  background: var(--light);
-  color: black;
-  width: 200px;
-  padding: 1em;
-  aspect-ratio: 3 / 2;
-  transition: 0.3s;
-}
-
-.mainpage-office h3 {
-  margin: 0;
-}
-
-.mainpage-office:hover {
-  border: 2px solid rgba(var(--button--rgb), 1);
-  background: rgba(var(--button--rgb), 0.1);
-}
-
-#documentOptions {
-  display: flex;
-  gap: 1em;
+.notification {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
 }

@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using API.Dtos;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using PasswordGenerator;
 
 namespace API.Controllers;
@@ -21,15 +23,16 @@ public class UsersController : ControllerBase
         _credentialsGeneratorService = credentialsGeneratorService;
     }
 
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult> GetAllUsers([FromQuery] string sortField, [FromQuery] string sortDirection, [FromQuery] string searchString)
+    public async Task<ActionResult> GetAllUsers([FromQuery] string? sortField, [FromQuery] string? sortDirection, [FromQuery] string? searchString)
     {
         var users = await _userService.GetAllUsers(sortField, sortDirection, searchString);
         return Ok(users);
     }
     
     // TODO move logic of creation password and login into service
+    // TODO make validation for unique email
     [HttpPost("add-user")]
     public async Task<ActionResult> AddUser(AddUserDto addUserDto)
     {

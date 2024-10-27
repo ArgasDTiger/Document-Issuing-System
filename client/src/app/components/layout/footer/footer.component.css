@@ -1,0 +1,16 @@
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em;
+  background: lightgray;
+}
+
+footer :is(h3,h4) {
+  margin: 0;
+}
+
+footer > div:first-child {
+  display: flex;
+  gap: 1em;
+}

@@ -1,4 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {DocumentService} from "../../../services/document.service";
+import {Department} from "../../../models/department";
+import {toSignal} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-document-list',
@@ -8,4 +11,20 @@ import {Component} from '@angular/core';
   styleUrl: './document-list.component.css'
 })
 export class DocumentListComponent {
+  private documentService = inject(DocumentService);
+
+  @Input({ required: true }) set department(value: Department) {
+    this.loadDocuments();
+  }
+
+  @Output() documentRequested = new EventEmitter<string>();
+
+  documents = toSignal(this.documentService.getAllDocuments(), { initialValue: [] });
+
+  private loadDocuments() {
+  }
+
+  onRequestDocument(documentId: string) {
+    this.documentRequested.emit(documentId);
+  }
 }

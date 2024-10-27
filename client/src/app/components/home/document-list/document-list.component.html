@@ -1,0 +1,12 @@
+<div class="document-list">
+  <h3>Доступні документи:</h3>
+  <div class="document-options">
+    @for (document of documents(); track document.id) {
+      <span>
+            <button (click)="onRequestDocument(document.id)">
+              {{ document.name }}
+            </button>
+          </span>
+    }
+  </div>
+</div>

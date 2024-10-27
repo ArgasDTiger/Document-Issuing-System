@@ -14,19 +14,21 @@ public class AuthController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IUserService _userService;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IUserService userService)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IUserService userService, ITokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _userService = userService;
+        _tokenService = tokenService;
     }
     
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await _userManager.Users
-            .FirstOrDefaultAsync(x => x.UserName == loginDto.Login || x.Email == loginDto.Login);
+            .FirstOrDefaultAsync(x => x.UserName == loginDto.UserLogin || x.Email == loginDto.UserLogin);
 
         if (user == null)
         {
@@ -40,6 +42,8 @@ public class AuthController : ControllerBase
             return Unauthorized(new Response(401, "Invalid credentials"));
         }
         
+        var token = await _tokenService.CreateToken(user);
+        
         return new UserDto
         {
             Login = user.UserName,
@@ -47,6 +51,7 @@ public class AuthController : ControllerBase
             MiddleName = user.MiddleName,
             LastName = user.LastName,
             DateOfBirth = user.DateOfBirth,
+            Token = token
         };
     }
     

@@ -9,4 +9,6 @@ public interface IUserRepository : IBaseRepository<User>
     Task AddDocumentToUser(DocumentToUser documentToUser);
     Task UpdateDocumentToUser(DocumentToUser documentToUser);
     void RemoveDocumentToUser(DocumentToUser documentToUser);
+    Task<IEnumerable<DocumentToUser>> GetUserDocuments(string userId);
+    Task<bool> SaveAllAsync();
 }

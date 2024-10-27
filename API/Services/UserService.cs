@@ -29,10 +29,14 @@ public class UserService : IUserService
         _userRepository = userRepository;
         _tokenService = tokenService;
     }
-
+    
     public async Task<IEnumerable<UserDto>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
     {
         var users = await _userRepository.GetAllUsers(sortField, sortDirection, searchString);
+        foreach (var user in users)
+        {
+            Console.WriteLine(user.Documents.Count);
+        }
         return _mapper.Map<IEnumerable<UserDto>>(users);
     }
 
@@ -46,7 +50,7 @@ public class UserService : IUserService
 
         var user = _mapper.Map<User>(addUserDto);
         var result = await _userManager.CreateAsync(user, addUserDto.Password);
-
+        await _userManager.AddToRoleAsync(user, "User");
         if (!result.Succeeded)
         {
             return (false, result.Errors, null);

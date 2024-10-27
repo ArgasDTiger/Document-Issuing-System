@@ -1,4 +1,5 @@
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Department} from "../../../models/department";
 
 @Component({
   selector: 'app-department-card',
@@ -8,5 +9,6 @@ import {Component} from '@angular/core';
   styleUrl: './department-card.component.css'
 })
 export class DepartmentCardComponent {
-
+  @Input({ required: true }) department!: Department;
+  @Output() selected = new EventEmitter<Department>();
 }

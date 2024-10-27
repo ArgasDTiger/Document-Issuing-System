@@ -1,4 +1,4 @@
 export interface RequestDocument {
-  login: string;
+  userLogin: string;
   documentId: string;
 }

@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 main {
   margin: 0 2em;
+  flex-grow: 1;
 }

@@ -12,4 +12,5 @@ public class UserDto
     public string Email { get; set; }
     public DateTime DateOfBirth { get; set; }
     public string Token { get; set; }
+    public ICollection<DocumentStatusDto> Documents { get; set; }
 }

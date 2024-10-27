@@ -1,0 +1,18 @@
+<header>
+  <nav class="nav-links">
+    <a routerLink="/">Головна</a>
+    @if (userRole() === 'employee' || userRole() === 'admin') {
+      <a routerLink="/employee" routerLinkActive="active">Сторінка працівника</a>
+    }
+    @if (userRole() === 'admin') {
+      <a routerLink="/admin" routerLinkActive="active">Сторінка адміна</a>
+    }
+  </nav>
+  <div class="nav-panel">
+    @if (isLoggedIn()) {
+      <button (click)="logout()">Вийти</button>
+    } @else {
+      <button routerLink="/login">Увійти</button>
+    }
+  </div>
+</header>
