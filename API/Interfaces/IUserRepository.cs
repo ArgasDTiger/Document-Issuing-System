@@ -1,9 +1,10 @@
+using API.Helpers;
 using API.Interfaces;
 using API.Models;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<IEnumerable<User>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null);
+    Task<(IEnumerable<User> users, int totalCount)> GetAllUsers(PaginationParameters pagination, string sortField = null, string sortDirection = "asc", string searchString = null);
     Task<User> GetUserByIdWithDocuments(string userId);
     Task<DocumentToUser> GetDocumentToUser(string userId, Guid documentId);
     Task AddDocumentToUser(DocumentToUser documentToUser);

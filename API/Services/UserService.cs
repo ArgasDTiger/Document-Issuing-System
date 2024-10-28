@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using API.Dtos;
+using API.Helpers;
 using API.Interfaces;
 using API.Models;
 using AutoMapper;
@@ -30,14 +31,21 @@ public class UserService : IUserService
         _tokenService = tokenService;
     }
     
-    public async Task<IEnumerable<UserDto>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
+    public async Task<PaginatedResponse<UserDto>> GetAllUsers(
+        PaginationParameters pagination,
+        string sortField = null,
+        string sortDirection = "asc",
+        string searchString = null)
     {
-        var users = await _userRepository.GetAllUsers(sortField, sortDirection, searchString);
-        foreach (var user in users)
-        {
-            Console.WriteLine(user.Documents.Count);
-        }
-        return _mapper.Map<IEnumerable<UserDto>>(users);
+        var (users, totalCount) = await _userRepository.GetAllUsers(
+            pagination, sortField, sortDirection, searchString);
+
+        var userDtos = _mapper.Map<IEnumerable<UserDto>>(users);
+        return new PaginatedResponse<UserDto>(
+            userDtos, 
+            totalCount, 
+            pagination.PageNumber, 
+            pagination.PageSize);
     }
 
     public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors, UserDto User)> AddUser(AddUserDto addUserDto)

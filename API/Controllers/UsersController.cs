@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using API.Dtos;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,13 @@ public class UsersController : ControllerBase
 
     // [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult> GetAllUsers([FromQuery] string? sortField, [FromQuery] string? sortDirection, [FromQuery] string? searchString)
+    public async Task<ActionResult> GetAllUsers(
+        [FromQuery] PaginationParameters pagination,
+        [FromQuery] string? sortField,
+        [FromQuery] string? sortDirection,
+        [FromQuery] string? searchString)
     {
-        var users = await _userService.GetAllUsers(sortField, sortDirection, searchString);
+        var users = await _userService.GetAllUsers(pagination, sortField, sortDirection, searchString);
         return Ok(users);
     }
     

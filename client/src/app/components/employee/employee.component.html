@@ -1,9 +1,14 @@
-<main class="container mx-auto p-4">
-  <h1 class="text-2xl font-bold mb-6">Управління документами користувачів</h1>
+<main>
+  <h1>Управління документами користувачів</h1>
 
-  <div class="mb-4">
+  <div class="controls-container">
+    <input
+      type="text"
+      placeholder="Пошук користувачів..."
+      (input)="onSearchChange($event)"
+    >
+
     <select
-      class="p-2 border rounded"
       (change)="onSortChange($event)"
     >
       <option value="">Сортувати за...</option>
@@ -13,50 +18,73 @@
     </select>
   </div>
 
-  <table class="min-w-full bg-white">
+  <table>
     <thead>
-    <tr class="bg-gray-100">
-      <th class="text-left py-3 px-4">Користувач</th>
-      <th class="text-left py-3 px-4">Документ</th>
-      <th class="text-left py-3 px-4">Дата запиту</th>
-      <th class="text-left py-3 px-4">Очікувана дата</th>
-      <th class="text-left py-3 px-4">Статус документів</th>
-      <th class="text-left py-3 px-4">Дії</th>
+    <tr>
+      <th>Користувач</th>
+      <th>Документ</th>
+      <th>Дата запиту</th>
+      <th>Статус документів</th>
+      <th>Дії</th>
     </tr>
     </thead>
     <tbody>
       @for (doc of activeDocuments(); track doc.documentId) {
-        <tr class="border-b">
-          <td class="py-3 px-4">{{ doc.firstName }} {{ doc.lastName }}</td>
-          <td class="py-3 px-4">{{ doc.documentName }}</td>
-          <td class="py-3 px-4">{{ doc.requestDate | date:'short' }}</td>
-          <td class="py-3 px-4">{{ doc.expectedReceivingDate | date:'short' }}</td>
-          <td class="py-3 px-4">
+        <tr>
+          <td>{{ doc.firstName }} {{ doc.lastName }}</td>
+          <td>{{ doc.documentName }}</td>
+          <td>{{ doc.requestDate | date:'short' }}</td>
+          <td>
             @switch (doc.status) {
               @case ('On process') {
-                <span class="text-orange-500">На опрацюванні</span>
+                <span class="status status-processing">На опрацюванні</span>
               }
               @case ('Received') {
-                <span class="text-green-500">Видано</span>
+                <span class="status status-received">Видано</span>
               }
             }
           </td>
-          <td class="py-3 px-4">
+          <td>
             @if (doc.status === 'On process') {
               <button
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                class="action-button"
                 (click)="completeDocument(doc.userLogin, doc.documentId)"
               >
-                Позначити як видано
+                Видати
               </button>
             }
           </td>
         </tr>
       } @empty {
         <tr>
-          <td colspan="6" class="py-4 text-center">Немає користувачів для відображення</td>
+          <td colspan="6" class="empty-state">Немає користувачів для відображення</td>
         </tr>
       }
     </tbody>
   </table>
+
+  <div class="pagination">
+    <button
+      (click)="onPageChange(currentPage() - 1)"
+      [disabled]="!hasPreviousPage()"
+    >
+      &lt;
+    </button>
+
+    @for (page of [].constructor(totalPages()); track $index) {
+      <button
+        (click)="onPageChange($index + 1)"
+        [class.active]="currentPage() === $index + 1"
+      >
+        {{ $index + 1 }}
+      </button>
+    }
+
+    <button
+      (click)="onPageChange(currentPage() + 1)"
+      [disabled]="!hasNextPage()"
+    >
+      &gt;
+    </button>
+  </div>
 </main>

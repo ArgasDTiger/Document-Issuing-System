@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,42 +9,69 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 {
     public UserRepository(DocumentDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<User>> GetAllUsers(string sortField = null, string sortDirection = "asc", string searchString = null)
+    public async Task<(IEnumerable<User> users, int totalCount)> GetAllUsers(
+    PaginationParameters pagination,
+    string sortField = null,
+    string sortDirection = "asc",
+    string searchString = null)
+{
+    var query = _context.Users
+        .Include(u => u.Documents)
+        .ThenInclude(d => d.Document)
+        .ThenInclude(d => d.Department)
+        .AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(searchString))
     {
-        var query = _context.Users
-            .Include(u => u.Documents)
-            .ThenInclude(d => d.Document)
-            .ThenInclude(d => d.Department)
-            .AsQueryable();
+        Console.WriteLine($"search string is {searchString}");
+        var searchTerms = searchString.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-        if (!string.IsNullOrWhiteSpace(searchString))
-        {
-            var search = searchString.ToLower();
-            query = query.Where(u => 
-                u.FirstName.ToLower().Contains(search) || 
-                u.LastName.ToLower().Contains(search) || 
-                u.Email.ToLower().Contains(search));
-        }
-
-        if (!string.IsNullOrWhiteSpace(sortField))
-        {
-            query = sortField.ToLower() switch
-            {
-                "firstname" => sortDirection == "asc" 
-                    ? query.OrderBy(u => u.FirstName) 
-                    : query.OrderByDescending(u => u.FirstName),
-                "lastname" => sortDirection == "asc" 
-                    ? query.OrderBy(u => u.LastName) 
-                    : query.OrderByDescending(u => u.LastName),
-                "email" => sortDirection == "asc" 
-                    ? query.OrderBy(u => u.Email) 
-                    : query.OrderByDescending(u => u.Email),
-                _ => query.OrderBy(u => u.FirstName)
-            };
-        }
-
-        return await query.ToListAsync();
+        query = query.AsEnumerable().Where(u =>
+            searchTerms.All(term =>
+                u.FirstName.ToLower().Contains(term) ||
+                u.LastName.ToLower().Contains(term) ||
+                u.MiddleName.ToLower().Contains(term) ||
+                u.UserName.ToLower().Contains(term) ||
+                u.Email.ToLower().Contains(term))
+        ).AsQueryable();
     }
+
+    if (!string.IsNullOrWhiteSpace(sortField))
+    {
+        query = sortField.ToLower() switch
+        {
+            "firstname" => sortDirection == "asc" 
+                ? query.OrderBy(u => u.FirstName) 
+                : query.OrderByDescending(u => u.FirstName),
+            "lastname" => sortDirection == "asc" 
+                ? query.OrderBy(u => u.LastName) 
+                : query.OrderByDescending(u => u.LastName),
+            "email" => sortDirection == "asc" 
+                ? query.OrderBy(u => u.Email) 
+                : query.OrderByDescending(u => u.Email),
+            _ => query.OrderBy(u => u.FirstName)
+        };
+    }
+
+    var totalCount = query.Count();
+
+    var users = query
+        .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+        .Take(pagination.PageSize)
+        .ToList();
+    
+    Console.WriteLine("Found users:");
+    foreach (var user in users)
+    {
+        Console.WriteLine($"{user.FirstName}");
+    }
+    return (users, totalCount);
+}
+
+
+
+
+
 
     public async Task<User> GetUserByIdWithDocuments(string userId)
     {

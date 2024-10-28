@@ -1,0 +1,144 @@
+main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--accent);
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.controls-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls-container input,
+.controls-container select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  min-width: 200px;
+}
+
+.controls-container input:focus,
+.controls-container select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent--rgb), 0.1);
+}
+
+table {
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+thead {
+  background-color: var(--accent);
+  color: white;
+}
+
+th {
+  padding: 1rem;
+  font-weight: 500;
+  text-align: left;
+  border: none;
+}
+
+td {
+  padding: 1rem;
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+  background-color: rgba(var(--accent--rgb), 0.05);
+}
+
+.status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.875rem;
+}
+
+.status-processing {
+  background-color: rgba(var(--accent2--rgb), 0.1);
+  color: var(--accent2);
+}
+
+.status-received {
+  background-color: rgba(var(--second--rgb), 0.1);
+  color: var(--second);
+}
+
+.action-button {
+  background-color: var(--button);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: rgba(var(--button--rgb), 0.9);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.pagination button:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.pagination button.active {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
