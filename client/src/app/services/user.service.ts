@@ -42,7 +42,7 @@ export class UserService {
     return this.http.post<User>(`${this.baseUrl}/add-user`, userData);
   }
 
-  changeUserRole(userId: string, newRole: User['roles']): Observable<any> {
+  changeUserRole(userId: string, newRole: User['role']): Observable<any> {
     return this.http.post(`${this.baseUrl}/change-role`, null, {
       params: { userId, newRole }
     });

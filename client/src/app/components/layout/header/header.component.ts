@@ -26,7 +26,7 @@ export class HeaderComponent {
 
   userRole = toSignal(
     this.authService.currentUser$.pipe(
-      map(user => user?.roles)
+      map(user => user?.role)
     ),
     { initialValue: null }
   );

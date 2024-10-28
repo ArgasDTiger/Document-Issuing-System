@@ -1,7 +1,6 @@
 <main>
   <section class="users-section">
     <h1>Список користувачів</h1>
-
     <div class="filters-container">
       <div class="search-container">
         <input
@@ -10,14 +9,12 @@
           (input)="onSearchChange($event)"
         >
       </div>
-
       <div class="select-filters">
         <select (change)="onFilterChange('role', $event.target.value)">
           <option value="all">Всі ролі</option>
-          <option value="user">Користувач</option>
-          <option value="employee">Працівник</option>
+          <option value="User">Користувач</option>
+          <option value="Employee">Працівник</option>
         </select>
-
         <select (change)="onFilterChange('department', $event.target.value)">
           <option value="all">Всі відділи</option>
           <option value="personal">Особисті</option>
@@ -25,7 +22,6 @@
         </select>
       </div>
     </div>
-
     <div class="table-container">
       <table>
         <thead>
@@ -38,44 +34,53 @@
         </tr>
         </thead>
         <tbody>
-          @for (user of filteredUsers(); track user.login) {
+          @for (user of filteredUsers(); track user.id) {
             <tr>
               <td>{{ user.login }}</td>
               <td>{{ user.firstName }} {{ user.lastName }}</td>
-              <td>{{ user.roles }}</td>
-              <td>{{ user.department || '-' }}</td>
+              <td>{{ translateRole(user.role) }}</td>
+              <td class="department-cell">
+                @if (user.role === 'Employee') {
+                  <select
+                    [ngModel]="user.department?.id"
+                    (ngModelChange)="changeDepartment(user.id, $event)"
+                    class="department-select"
+                  >
+                    @if (!user.department) {
+                      <option value="" disabled>Оберіть відділ</option>
+                    }
+                    @for (dept of departments(); track dept.id) {
+                      <option [value]="dept.id" [selected]="dept.id === user.department?.id">
+                        {{ dept.name }}
+                      </option>
+                    }
+                  </select>
+                } @else {
+                  -
+                }
+              </td>
               <td class="actions">
-                @if (user.roles === 'user') {
+                @if (user.role !== 'Employee') {
                   <button
                     class="action-button"
-                    (click)="initiateRoleChange(user.login, 'employee')"
+                    (click)="initiateRoleChange(user.id, 'Employee')"
                   >
                     Зробити працівником
                   </button>
                 } @else {
                   <button
                     class="action-button"
-                    (click)="initiateRoleChange(user.login, 'user')"
+                    (click)="initiateRoleChange(user.id, 'User')"
                   >
                     Зробити користувачем
                   </button>
                 }
-
-                <select
-                  *ngIf="user.roles === 'employee'"
-                  (change)="changeDepartment(user.login, $event.target.value)"
-                >
-                  <option value="">-</option>
-                  <option value="personal">Особисті довідки</option>
-                  <option value="finance">Фінанси</option>
-                </select>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
-
     <div class="pagination">
       <button
         [disabled]="!hasPreviousPage()"
@@ -100,27 +105,37 @@
     </div>
   </section>
 
-  @if (showConfirmModal()) {
+  @if (roleChangeModal().show) {
     <div class="modal-overlay">
       <div class="modal">
         <h2>Підтвердження зміни ролі</h2>
-        <p>Ви впевнені, що хочете змінити роль цього користувача?</p>
+        @if (roleChangeModal().newRole === 'Employee') {
+          <div class="department-selection">
+            <p>Оберіть відділ для нового працівника:</p>
+            <select [(ngModel)]="selectedDepartment">
+              <option value="">Оберіть відділ</option>
+              @for (dept of roleChangeModal().departments; track dept.id) {
+                <option [value]="dept.id">{{ dept.name }}</option>
+              }
+            </select>
+          </div>
+        } @else {
+          <p>Ви впевнені, що хочете змінити роль цього користувача на звичайного користувача?</p>
+          <p>Користувач втратить доступ до відділу та пов'язані з ним можливості.</p>
+        }
         <div class="modal-actions">
-          <button class="action-button" (click)="confirmRoleChange()">Підтвердити</button>
-          <button class="cancel-button" (click)="cancelRoleChange()">Скасувати</button>
+          <button
+            class="action-button"
+            (click)="confirmRoleChange()"
+            [disabled]="roleChangeModal().newRole === 'Employee' && !selectedDepartment"
+          >
+            Підтвердити
+          </button>
+          <button class="cancel-button" (click)="cancelRoleChange()">
+            Скасувати
+          </button>
         </div>
       </div>
     </div>
-  }
-
-  <button class="action-button" (click)="showAddUserModal.set(true)">
-    Додати користувача
-  </button>
-
-  @if (showAddUserModal()) {
-    <app-add-user
-      (close)="showAddUserModal.set(false)"
-      (userAdded)="onUserAdded()"
-    />
   }
 </main>

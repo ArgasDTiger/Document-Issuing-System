@@ -34,8 +34,6 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
     
-    // TODO move logic of creation password and login into service
-    // TODO make validation for unique email
     [HttpPost("add-user")]
     public async Task<ActionResult> AddUser(AddUserDto addUserDto)
     {
@@ -65,7 +63,7 @@ public class UsersController : ControllerBase
         return Ok(new { Message = "User created successfully and email sent.", result.User });
     }
 
-    [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     [HttpPost("change-role")]
     public async Task<IActionResult> ChangeUserRole([FromQuery] string userId, [FromQuery] string newRole)
     {

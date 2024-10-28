@@ -19,4 +19,5 @@ public class Department
     public string Email { get; set; } = string.Empty;
 
     public ICollection<Document> Documents { get; set; } = new List<Document>();
+    public ICollection<User> Users { get; set; } = new List<User>();
 }

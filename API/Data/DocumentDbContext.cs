@@ -30,8 +30,8 @@ public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : Id
             .HasForeignKey(d => d.DocumentId);
         
         modelBuilder.Entity<User>()
-            .HasOne(d => d.Departments)
-            .WithMany()
+            .HasOne(d => d.Department)
+            .WithMany(d => d.Users)
             .HasForeignKey(d => d.DepartmentId);
     }
 }

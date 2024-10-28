@@ -8,14 +8,18 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        CreateMap<Department, DepartmentDto>();
+
         CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Login, opt => opt.MapFrom(src => src.UserName))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.MiddleName, opt => opt.MapFrom(src => src.MiddleName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
-            .ForMember(dest => dest.Documents, opt => opt.MapFrom(src => src.Documents));
+            .ForMember(dest => dest.Documents, opt => opt.MapFrom(src => src.Documents))
+            .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department));
 
         CreateMap<AddUserDto, User>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Login))

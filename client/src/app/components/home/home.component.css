@@ -1,9 +1,20 @@
 main {
+  min-height: 60vh;
   padding: 2rem;
-  min-height: calc(100vh - 140px); /* Adjust for header and footer */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.logged-in-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -12,17 +23,12 @@ main {
   box-shadow: var(--shadow);
 }
 
-/* Pre-login layout */
-.container:has(.info) {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: start;
-}
-
-/* Info section styles */
 .info {
-  padding-right: 2rem;
+  max-width: 600px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .info h1 {
@@ -39,12 +45,6 @@ main {
   margin-bottom: 1rem;
 }
 
-/* Post-login layout */
-.container:not(:has(.info)) {
-  max-width: 800px;
-}
-
-/* Department selection */
 h2 {
   color: var(--accent);
   margin-bottom: 1.5rem;
@@ -58,7 +58,6 @@ h2 {
   margin-bottom: 2rem;
 }
 
-/* Notification styles */
 .notification {
   background-color: rgba(var(--second--rgb), 0.1);
   border: 1px solid var(--second);
@@ -69,24 +68,36 @@ h2 {
   line-height: 1.5;
 }
 
-/* Responsive adjustments */
+.info .login-button {
+  margin-top: 2rem;
+  padding: 0.75rem 2rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.info .login-button:hover {
+  background-color: var(--accent2);
+}
+
 @media (max-width: 768px) {
-  .container:has(.info) {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  .info {
-    padding-right: 0;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--border);
-  }
-
   main {
     padding: 1rem;
   }
 
-  .container {
+  .info {
     padding: 1.5rem;
+  }
+
+  .info h1 {
+    font-size: 1.8rem;
+  }
+
+  .info p {
+    font-size: 1rem;
   }
 }

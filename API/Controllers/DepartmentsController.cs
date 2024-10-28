@@ -1,3 +1,4 @@
+using API.Dtos;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,12 @@ namespace API.Controllers;
 public class DepartmentsController : ControllerBase
 {
     private readonly IDepartmentRepository _departmentRepository;
+    private readonly IDepartmentService _departmentService;
 
-    public DepartmentsController(IDepartmentRepository departmentRepository)
+    public DepartmentsController(IDepartmentRepository departmentRepository, IDepartmentService departmentService)
     {
         _departmentRepository = departmentRepository;
+        _departmentService = departmentService;
     }
 
     [HttpGet]
@@ -31,4 +34,15 @@ public class DepartmentsController : ControllerBase
             
         return Ok(department);
     }
+    
+    [HttpPost("change-department")]
+    public async Task<IActionResult> ChangeDepartment([FromBody] ChangeDepartmentDto changeDepartmentDto)
+    {
+        var result = await _departmentService.ChangeDepartment(changeDepartmentDto.UserId, changeDepartmentDto.DepartmentId);
+
+        return result
+            ? Ok(new { Message = "User department updated successfully" })
+            : BadRequest(new { Message = "Failed to update user department" });
+    }
+
 }

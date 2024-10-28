@@ -1,13 +1,16 @@
 <main>
-  <div class="container">
-    @if (!isLoggedIn()) {
+  @if (!isLoggedIn()) {
+    <div class="container">
       <div class="info">
         <h1>Система запиту документів</h1>
-        <p>Ласкаво просимо до нашої системи запиту документів. Тут ви можете зручно замовити необхідні вам документи з різних відділів нашої організації.</p>
+        <p>Ласкаво просимо до нашої системи запиту документів.<br> Тут ви можете зручно замовити необхідні вам документи з різних відділів нашої організації.</p>
         <p>Для отримання доступу до системи, будь ласка, увійдіть у свій обліковий запис.</p>
+        <button class="login-button" routerLink="/login">Увійти в систему</button>
       </div>
-      <app-login />
-    } @else {
+    </div>
+  }
+  @else {
+    <div class="logged-in-container">
       <h2>Виберіть відділ:</h2>
       <div class="mainpage-offices">
         @for (department of departments(); track department.id) {
@@ -32,6 +35,6 @@
           Очікувана дата отримання: {{ expectedDate() }}
         </div>
       }
-    }
-  </div>
+    </div>
+  }
 </main>

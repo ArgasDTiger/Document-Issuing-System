@@ -1,6 +1,7 @@
 using API.Helpers;
-using API.Interfaces;
 using API.Models;
+
+namespace API.Interfaces;
 
 public interface IUserRepository : IBaseRepository<User>
 {

@@ -18,7 +18,7 @@ public class User : IdentityUser
     
     public Guid? DepartmentId { get; set; }
 
-    public Department? Departments { get; set; }
+    public Department? Department { get; set; }
     
     public ICollection<DocumentToUser> Documents { get; set; } = new List<DocumentToUser>();
 }

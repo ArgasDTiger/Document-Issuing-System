@@ -34,6 +34,7 @@ public static class ServicesExtensions
         services.AddScoped<ICredentialsGeneratorService, CredentialsGeneratorService>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IDocumentService, DocumentService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
 
         return services;
     }

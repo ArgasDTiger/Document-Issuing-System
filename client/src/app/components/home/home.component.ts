@@ -7,6 +7,7 @@ import {map} from "rxjs";
 import {DepartmentCardComponent} from "./department-card/department-card.component";
 import {DocumentListComponent} from "./document-list/document-list.component";
 import {LoginComponent} from "../auth/login/login.component";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,8 @@ import {LoginComponent} from "../auth/login/login.component";
   imports: [
     DepartmentCardComponent,
     DocumentListComponent,
-    LoginComponent
+    LoginComponent,
+    RouterLink
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'

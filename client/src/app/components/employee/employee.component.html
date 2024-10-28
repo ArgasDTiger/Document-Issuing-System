@@ -1,23 +1,28 @@
 <main>
-  <h1>Управління документами користувачів</h1>
+  <section class="users-section">
+    <h1>Управління документами користувачів</h1>
 
-  <div class="controls-container">
-    <input
-      type="text"
-      placeholder="Пошук користувачів..."
-      (input)="onSearchChange($event)"
-    >
+    <div class="filters-container">
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Пошук користувачів..."
+          (input)="onSearchChange($event)"
+        >
+      </div>
+      <div class="select-filters">
+        <select
+          (change)="onSortChange($event)"
+        >
+          <option value="">Сортувати за...</option>
+          <option value="firstName">Ім'ям</option>
+          <option value="requestDate">Датою запиту</option>
+          <option value="status">Статусом</option>
+        </select>
+      </div>
+    </div>
 
-    <select
-      (change)="onSortChange($event)"
-    >
-      <option value="">Сортувати за...</option>
-      <option value="firstName">Ім'ям</option>
-      <option value="requestDate">Датою запиту</option>
-      <option value="status">Статусом</option>
-    </select>
-  </div>
-
+  <div class="table-container">
   <table>
     <thead>
     <tr>
@@ -62,6 +67,7 @@
       }
     </tbody>
   </table>
+  </div>
 
   <div class="pagination">
     <button
@@ -87,4 +93,5 @@
       &gt;
     </button>
   </div>
+  </section>
 </main>

@@ -44,8 +44,13 @@ public class UserService : IUserService
         foreach (var user in users)
         {
             var userDto = _mapper.Map<UserDto>(user);
-            userDto.Roles = await _userManager.GetRolesAsync(user);
-            userDtos.Add(userDto);
+            var roles = await _userManager.GetRolesAsync(user);
+            userDto.Role = roles.FirstOrDefault() ?? "User";  // Set single role, defaulting to "User"
+        
+            if (userDto.Role != "Admin")  // Changed from !Contains to != since we now have single role
+            {
+                userDtos.Add(userDto);
+            }
         }
 
         return new PaginatedResponse<UserDto>(
