@@ -1,0 +1,126 @@
+<main>
+  <section class="users-section">
+    <h1>Список користувачів</h1>
+
+    <div class="filters-container">
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Пошук користувачів..."
+          (input)="onSearchChange($event)"
+        >
+      </div>
+
+      <div class="select-filters">
+        <select (change)="onFilterChange('role', $event.target.value)">
+          <option value="all">Всі ролі</option>
+          <option value="user">Користувач</option>
+          <option value="employee">Працівник</option>
+        </select>
+
+        <select (change)="onFilterChange('department', $event.target.value)">
+          <option value="all">Всі відділи</option>
+          <option value="personal">Особисті</option>
+          <option value="finance">Фінанси</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Логін</th>
+          <th>ПІБ</th>
+          <th>Роль</th>
+          <th>Відділ</th>
+          <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for (user of filteredUsers(); track user.login) {
+            <tr>
+              <td>{{ user.login }}</td>
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.roles }}</td>
+              <td>{{ user.department || '-' }}</td>
+              <td class="actions">
+                @if (user.roles === 'user') {
+                  <button
+                    class="action-button"
+                    (click)="initiateRoleChange(user.login, 'employee')"
+                  >
+                    Зробити працівником
+                  </button>
+                } @else {
+                  <button
+                    class="action-button"
+                    (click)="initiateRoleChange(user.login, 'user')"
+                  >
+                    Зробити користувачем
+                  </button>
+                }
+
+                <select
+                  *ngIf="user.roles === 'employee'"
+                  (change)="changeDepartment(user.login, $event.target.value)"
+                >
+                  <option value="">-</option>
+                  <option value="personal">Особисті довідки</option>
+                  <option value="finance">Фінанси</option>
+                </select>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button
+        [disabled]="!hasPreviousPage()"
+        (click)="onPageChange(currentPage() - 1)"
+      >
+        &lt;-
+      </button>
+      @for (page of [].constructor(totalPages()); track $index) {
+        <button
+          [class.active]="currentPage() === ($index + 1)"
+          (click)="onPageChange($index + 1)"
+        >
+          {{ $index + 1 }}
+        </button>
+      }
+      <button
+        [disabled]="!hasNextPage()"
+        (click)="onPageChange(currentPage() + 1)"
+      >
+        -&gt;
+      </button>
+    </div>
+  </section>
+
+  @if (showConfirmModal()) {
+    <div class="modal-overlay">
+      <div class="modal">
+        <h2>Підтвердження зміни ролі</h2>
+        <p>Ви впевнені, що хочете змінити роль цього користувача?</p>
+        <div class="modal-actions">
+          <button class="action-button" (click)="confirmRoleChange()">Підтвердити</button>
+          <button class="cancel-button" (click)="cancelRoleChange()">Скасувати</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <button class="action-button" (click)="showAddUserModal.set(true)">
+    Додати користувача
+  </button>
+
+  @if (showAddUserModal()) {
+    <app-add-user
+      (close)="showAddUserModal.set(false)"
+      (userAdded)="onUserAdded()"
+    />
+  }
+</main>

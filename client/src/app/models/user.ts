@@ -1,4 +1,3 @@
-import {Document} from "./document";
 import {UserDocument} from "./user-document";
 
 export interface User {
@@ -7,7 +6,8 @@ export interface User {
   middleName: string;
   lastName: string;
   email: string;
-  role: 'user' | 'employee' | 'admin';
+  roles: string;
+  department: string;
   birthdate: Date;
   token: string;
   documents: UserDocument[];

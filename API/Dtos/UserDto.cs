@@ -13,4 +13,5 @@ public class UserDto
     public DateTime DateOfBirth { get; set; }
     public string Token { get; set; }
     public ICollection<DocumentStatusDto> Documents { get; set; }
+    public ICollection<string> Roles { get; set; }
 }

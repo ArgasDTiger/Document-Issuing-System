@@ -1,73 +1,107 @@
-.popover {
-  background: white;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   max-width: 500px;
-  width: 100%;
+  width: 90%;
+}
+
+h2 {
+  color: var(--accent);
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
   margin-bottom: 1rem;
 }
 
-.form-group label {
+.form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  color: #666;
+  font-size: 0.875rem;
 }
 
 input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: var(--radius);
   font-size: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 input.invalid {
   border-color: #dc3545;
 }
 
-.error-text {
+.validation-error {
   color: #dc3545;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+  display: block;
 }
 
 .error-message {
-  background: #fff3f3;
+  background-color: #fff3f3;
   color: #dc3545;
   padding: 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--radius);
   margin-bottom: 1rem;
 }
 
-.form-actions {
+.modal-actions {
   display: flex;
+  justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
 }
 
-button {
+.action-button {
+  background-color: var(--button);
+  color: white;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
+  border-radius: var(--radius);
   border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
 }
 
-button:disabled {
+.action-button:hover:not(:disabled) {
+  background-color: rgba(var(--button--rgb), 0.9);
+}
+
+.action-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.primary-button {
-  background: #0066cc;
+.cancel-button {
+  background-color: #dc3545;
   color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
 }
 
-.secondary-button {
-  background: #e9ecef;
-  color: #212529;
+.cancel-button:hover {
+  background-color: #c82333;
 }

@@ -1,10 +1,8 @@
-using System.Security.Claims;
 using API.Dtos;
 using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 using PasswordGenerator;
 
 namespace API.Controllers;

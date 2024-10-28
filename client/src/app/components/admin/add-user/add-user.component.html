@@ -1,0 +1,89 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal">
+    <h2>Додати нового користувача</h2>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="lastName"
+          placeholder="Прізвище"
+          [class.invalid]="isFieldInvalid('lastName')"
+          (blur)="onBlur('lastName')"
+        >
+        @if (userForm.get('lastName')?.errors?.['required'] && userForm.get('lastName')?.touched) {
+          <span class="validation-error">Прізвище обов'язкове</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="firstName"
+          placeholder="Ім'я"
+          [class.invalid]="isFieldInvalid('firstName')"
+          (blur)="onBlur('firstName')"
+        >
+        @if (userForm.get('firstName')?.errors?.['required'] && userForm.get('firstName')?.touched) {
+          <span class="validation-error">Ім'я обов'язкове</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="middleName"
+          placeholder="По батькові"
+          [class.invalid]="isFieldInvalid('middleName')"
+          (blur)="onBlur('middleName')"
+        >
+        @if (userForm.get('middleName')?.errors?.['required'] && userForm.get('middleName')?.touched) {
+          <span class="validation-error">По батькові обов'язкове</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Електронна пошта"
+          [class.invalid]="isFieldInvalid('email')"
+          (blur)="onBlur('email')"
+        >
+        @if (userForm.get('email')?.errors?.['required'] && userForm.get('email')?.touched) {
+          <span class="validation-error">Email обов'язковий</span>
+        }
+        @if (userForm.get('email')?.errors?.['email'] && userForm.get('email')?.touched) {
+          <span class="validation-error">Невірний формат email</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="birthdate" class="form-label">Дата народження</label>
+        <input
+          id="birthdate"
+          type="date"
+          formControlName="birthdate"
+          [class.invalid]="isFieldInvalid('birthdate')"
+          (blur)="onBlur('birthdate')"
+        >
+        @if (userForm.get('birthdate')?.errors?.['required'] && userForm.get('birthdate')?.touched) {
+          <span class="validation-error">Дата народження обов'язкова</span>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="action-button" [disabled]="userForm.invalid || isSubmitting()">
+          Додати користувача
+        </button>
+        <button type="button" class="cancel-button" (click)="onCancel()">
+          Скасувати
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

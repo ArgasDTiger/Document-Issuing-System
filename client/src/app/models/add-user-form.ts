@@ -4,5 +4,4 @@ export interface AddUserForm {
   middleName: string;
   birthdate: Date;
   email: string;
-  role: string;
 }

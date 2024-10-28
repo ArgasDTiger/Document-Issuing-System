@@ -40,7 +40,14 @@ public class UserService : IUserService
         var (users, totalCount) = await _userRepository.GetAllUsers(
             pagination, sortField, sortDirection, searchString);
 
-        var userDtos = _mapper.Map<IEnumerable<UserDto>>(users);
+        var userDtos = new List<UserDto>();
+        foreach (var user in users)
+        {
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Roles = await _userManager.GetRolesAsync(user);
+            userDtos.Add(userDto);
+        }
+
         return new PaginatedResponse<UserDto>(
             userDtos, 
             totalCount, 
@@ -48,12 +55,15 @@ public class UserService : IUserService
             pagination.PageSize);
     }
 
+
     public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors, UserDto User)> AddUser(AddUserDto addUserDto)
     {
-        var existingUser = await _userManager.FindByNameAsync(addUserDto.Login);
-        if (existingUser != null)
+        var existingUserByEmail = await _userManager.FindByEmailAsync(addUserDto.Email);
+        var existingUserByLogin = await _userManager.FindByNameAsync(addUserDto.Login);
+
+        if (existingUserByEmail != null || existingUserByLogin != null)
         {
-            return (false, new[] { new IdentityError { Description = "Login is already taken." } }, null);
+            return (false, new[] { new IdentityError { Description = "Email is already taken." } }, null);
         }
 
         var user = _mapper.Map<User>(addUserDto);
