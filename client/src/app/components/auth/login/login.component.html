@@ -3,37 +3,33 @@
     @if (showRecovery()) {
       <div id="loginRecovery" class="login">
         <h2>Відновлення паролю</h2>
-        <span>Введіть свою пошту. На неї вам буде надіслано підтвердження відновлення паролю.</span>
+        <span>Введіть свою пошту. На неї вам буде надіслано посилання для відновлення паролю.</span>
         <form [formGroup]="recoveryForm" (ngSubmit)="onRecoverySubmit()">
-          <input type="email" formControlName="email" placeholder="Пошта" required>
+          <input type="email"
+                 formControlName="email"
+                 placeholder="Пошта"
+                 required
+                 [disabled]="isLoading()">
+
           @if (errorMessage()) {
-            <span class="valid-text">{{ errorMessage() }}</span>
+            <span class="valid-text error">{{ errorMessage() }}</span>
           }
-          <button type="submit" [disabled]="recoveryForm.invalid">Надіслати</button>
-        </form>
-      </div>
-    } @else if (showRecoverySuccess()) {
-      <div id="loginRecoverySuccess" class="login">
-        <h2>Відновлення паролю</h2>
-        <span>Введіть новий пароль.</span>
-        <form [formGroup]="newPasswordForm" (ngSubmit)="onNewPasswordSubmit()">
-          <div>
-            <input [type]="showPassword() ? 'text' : 'password'"
-                   formControlName="password"
-                   placeholder="Пароль"
-                   required>
-            <span class="material-symbols-rounded"
-                  (click)="togglePassword()">
-                  {{ showPassword() ? 'password_2_off' : 'password' }}
-                </span>
-          </div>
-          @if (errorMessage()) {
-            <span class="valid-text">{{ errorMessage() }}</span>
-          }
-          <button type="submit" [disabled]="newPasswordForm.invalid">Змінити</button>
+
           @if (successMessage()) {
             <span class="valid-text success">{{ successMessage() }}</span>
           }
+
+          <div class="buttons">
+            <button type="submit"
+                    [disabled]="recoveryForm.invalid || isLoading()">
+              {{ isLoading() ? 'Відправка...' : 'Надіслати' }}
+            </button>
+            <button type="button"
+                    (click)="cancelRecovery()"
+                    [disabled]="isLoading()">
+              Назад
+            </button>
+          </div>
         </form>
       </div>
     } @else {
@@ -41,22 +37,41 @@
         <h2>Вхід в систему</h2>
         <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
           @if (errorMessage()) {
-            <span class="valid-text">{{ errorMessage() }}</span>
+            <span class="valid-text error">{{ errorMessage() }}</span>
           }
-          <input type="text" formControlName="userLogin" placeholder="Логін" required>
+
+          @if (successMessage()) {
+            <span class="valid-text success">{{ successMessage() }}</span>
+          }
+
+          <input type="text"
+                 formControlName="userLogin"
+                 placeholder="Логін"
+                 required
+                 [disabled]="isLoading()">
+
           <div>
             <input [type]="showPassword() ? 'text' : 'password'"
                    formControlName="password"
                    placeholder="Пароль"
-                   required>
+                   required
+                   [disabled]="isLoading()">
             <span class="material-symbols-rounded"
                   (click)="togglePassword()">
-                  {{ showPassword() ? 'password_2_off' : 'password' }}
-                </span>
+              {{ showPassword() ? 'password_2_off' : 'password' }}
+            </span>
           </div>
+
           <div>
-            <button type="submit" [disabled]="loginForm.invalid">Увійти</button>
-            <a (click)="showRecovery.set(true)">Забули пароль?</a>
+            <button type="submit"
+                    [disabled]="loginForm.invalid || isLoading()">
+              {{ isLoading() ? 'Вхід...' : 'Увійти' }}
+            </button>
+            <a (click)="showRecovery.set(true)"
+               [class.disabled]="isLoading()"
+               role="button">
+              Забули пароль?
+            </a>
           </div>
         </form>
       </div>

@@ -6,13 +6,15 @@ import {toSignal} from "@angular/core/rxjs-interop";
 import {map} from "rxjs";
 import {DepartmentCardComponent} from "./department-card/department-card.component";
 import {DocumentListComponent} from "./document-list/document-list.component";
+import {LoginComponent} from "../auth/login/login.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     DepartmentCardComponent,
-    DocumentListComponent
+    DocumentListComponent,
+    LoginComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'

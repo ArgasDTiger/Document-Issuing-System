@@ -6,11 +6,6 @@ import { User } from '../models/user';
 import { environment } from '../../environments/environment';
 import {AbstractControl, ValidationErrors, ɵElement, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
 
-interface LoginCredentials {
-  username: string;
-  password: string;
-}
-
 @Injectable({
   providedIn: 'root'
 })

@@ -5,10 +5,19 @@ main {
 }
 
 .users-section {
-  background-color: white;
-  border-radius: var(--radius);
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  padding-bottom: 4rem;
+}
+
+.add-user-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 2rem;
+  background-color: var(--accent);
+}
+
+.add-user-button:hover {
+  background-color: var(--accent2);
 }
 
 h1 {
@@ -191,3 +200,4 @@ tbody tr:hover {
 .cancel-button:hover {
   background-color: #c82333;
 }
+
