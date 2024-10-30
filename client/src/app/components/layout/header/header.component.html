@@ -1,18 +1,24 @@
 <header>
   <nav class="nav-links">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Головна</a>
-    @if (userRole() === 'employee' || userRole() === 'admin') {
+    @if (!isLoggedIn()) {
+      <a routerLink="/welcome" routerLinkActive="active">Головна</a>
+    }
+    @if (userRole() === 'employee') {
       <a routerLink="/employee" routerLinkActive="active">Сторінка працівника</a>
     }
     @if (userRole() === 'admin') {
-      <a routerLink="/admin" routerLinkActive="active">Сторінка адміна</a>
+      <a routerLink="/admin" routerLinkActive="active">Сторінка адміністратора</a>
+    }
+    @if (userRole() === 'user') {
+      <a routerLink="/dashboard" routerLinkActive="active">Дашборд</a>
     }
   </nav>
   <div class="nav-panel">
     @if (isLoggedIn()) {
-      <button (click)="logout()">Вийти</button>
+      <span class="user-greeting">Вітаємо, {{userFullName()}}</span>
+      <button (click)="logout()" class="logout-btn">Вийти</button>
     } @else {
-      <button routerLink="/login">Увійти</button>
+      <button routerLink="/login" class="login-btn">Увійти</button>
     }
   </div>
 </header>

@@ -31,6 +31,13 @@ export class HeaderComponent {
     { initialValue: null }
   );
 
+  userFullName = toSignal(
+    this.authService.currentUser$.pipe(
+      map(user => user ? `${user.firstName} ${user.middleName}` : '')
+    ),
+    { initialValue: '' }
+  );
+
   logout() {
     this.authService.logout();
   }

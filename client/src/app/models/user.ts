@@ -1,5 +1,5 @@
-import {UserDocument} from "./user-document";
 import {Department} from "./department";
+import {DocumentStatus} from "./document-status";
 
 export interface User {
   id: string;
@@ -9,9 +9,8 @@ export interface User {
   lastName: string;
   email: string;
   role: string;
-  department?: Department;
-  departmentId?: string;
   birthdate: Date;
-  token: string;
-  documents: UserDocument[];
+  department?: Department;
+  documents: DocumentStatus[];
+  token?: string;
 }

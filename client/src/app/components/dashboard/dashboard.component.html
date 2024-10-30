@@ -1,0 +1,26 @@
+<div class="logged-in-container">
+  <h2>Виберіть відділ:</h2>
+  <div class="mainpage-offices">
+    @for (department of departments(); track department.id) {
+      <app-department-card
+        [department]="department"
+        (selected)="onDepartmentSelect($event)"
+      />
+    }
+  </div>
+
+  @if (selectedDepartment()) {
+    <app-document-list
+      [department]="selectedDepartment()"
+      (documentRequested)="onDocumentRequest($event)"
+    />
+  }
+
+  @if (notification()) {
+    <div class="notification">
+      Дякуємо, документи на опрацюванні, очікуйте.<br>
+      Дата подання заявки: {{ requestDate() }}<br>
+      Очікувана дата отримання: {{ expectedDate() }}
+    </div>
+  }
+</div>

@@ -4,5 +4,4 @@ export interface Department {
   description: string;
   phone: string;
   email: string;
-  documents: string[];
 }

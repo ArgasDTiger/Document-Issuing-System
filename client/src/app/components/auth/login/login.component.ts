@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "../../../services/auth.service";
 import { PasswordResetService } from "../../../services/password-reset.service";
+import {LoginCredentials} from "../../../models/login-credentials";
 
 @Component({
   selector: 'app-login',
@@ -34,16 +35,18 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]]
   });
 
-  togglePassword() {
-    this.showPassword.update(value => !value);
-  }
-
   onLoginSubmit() {
     if (this.loginForm.valid) {
       this.isLoading.set(true);
       this.errorMessage.set('');
 
-      this.authService.login(this.loginForm.value).subscribe({
+      // Create properly typed credentials object
+      const credentials: LoginCredentials = {
+        userLogin: this.loginForm.get('userLogin')?.value || '',
+        password: this.loginForm.get('password')?.value || ''
+      };
+
+      this.authService.login(credentials).subscribe({
         next: () => {
           this.isLoading.set(false);
           this.router.navigate(['/']);
@@ -55,6 +58,7 @@ export class LoginComponent {
       });
     }
   }
+
 
   onRecoverySubmit() {
     if (this.recoveryForm.valid) {

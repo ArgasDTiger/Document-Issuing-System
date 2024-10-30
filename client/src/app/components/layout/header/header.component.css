@@ -13,6 +13,17 @@ header {
   align-items: center;
 }
 
+.nav-panel {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-greeting {
+  margin-right: 1rem;
+  color: var(--text);
+}
+
 .nav-links a {
   color: var(--text);
   text-decoration: none;
@@ -28,7 +39,8 @@ header {
   color: var(--accent);
 }
 
-.nav-panel button {
+.login-btn,
+.logout-btn {
   background-color: var(--accent);
   color: white;
   padding: 0.5rem 1.5rem;
@@ -39,6 +51,7 @@ header {
   transition: background-color 0.2s;
 }
 
-.nav-panel button:hover {
+.login-btn:hover,
+.logout-btn:hover {
   background-color: var(--accent2);
 }

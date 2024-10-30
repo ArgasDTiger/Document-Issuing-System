@@ -4,7 +4,7 @@ namespace API.Dtos;
 
 public class UserDto
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
     public string Login { get; set; }
     public string FirstName { get; set; }
     public string MiddleName { get; set; } 

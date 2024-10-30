@@ -25,7 +25,6 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 
         if (!string.IsNullOrWhiteSpace(searchString))
         {
-            Console.WriteLine($"search string is {searchString}");
             var searchTerms = searchString.ToLower().Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
             query = query.AsEnumerable().Where(u =>
@@ -62,11 +61,6 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .Take(pagination.PageSize)
             .ToList();
         
-        Console.WriteLine("Found users:");
-        foreach (var user in users)
-        {
-            Console.WriteLine($"{user.FirstName}");
-        }
         return (users, totalCount);
     }
     public async Task<User> GetUserByIdWithDocuments(string userId)

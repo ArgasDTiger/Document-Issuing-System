@@ -112,6 +112,7 @@ public class UserService : IUserService
 
         var userDto = _mapper.Map<UserDto>(appUser);
         userDto.Token = await _tokenService.CreateToken(appUser);
+        userDto.Role = (await _userManager.GetRolesAsync(appUser))[0];
 
         return userDto;
     }
