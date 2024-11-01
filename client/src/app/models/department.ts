@@ -1,7 +1,10 @@
+import {Document} from "./document";
+
 export interface Department {
   id: string;
   name: string;
   description: string;
-  phone: string;
+  phoneNumber: string;
   email: string;
+  documents: Document[];
 }

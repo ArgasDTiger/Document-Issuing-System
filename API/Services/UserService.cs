@@ -45,9 +45,9 @@ public class UserService : IUserService
         {
             var userDto = _mapper.Map<UserDto>(user);
             var roles = await _userManager.GetRolesAsync(user);
-            userDto.Role = roles.FirstOrDefault() ?? "User";  // Set single role, defaulting to "User"
+            userDto.Role = roles.FirstOrDefault() ?? "User";
         
-            if (userDto.Role != "Admin")  // Changed from !Contains to != since we now have single role
+            if (userDto.Role != "Admin")
             {
                 userDtos.Add(userDto);
             }
@@ -103,7 +103,9 @@ public class UserService : IUserService
     public async Task<UserDto> GetCurrentUserAsync(ClaimsPrincipal user)
     {
         var email = user.FindFirstValue(ClaimTypes.Email);
-        var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Email == email);
+        var appUser = await _userManager.Users
+            .Include(u => u.Department)
+            .SingleOrDefaultAsync(x => x.Email == email);
 
         if (appUser == null)
         {
@@ -113,6 +115,8 @@ public class UserService : IUserService
         var userDto = _mapper.Map<UserDto>(appUser);
         userDto.Token = await _tokenService.CreateToken(appUser);
         userDto.Role = (await _userManager.GetRolesAsync(appUser))[0];
+        userDto.Department = _mapper.Map<DepartmentDto>(appUser.Department);
+
 
         return userDto;
     }

@@ -10,5 +10,6 @@ import {Department} from "../../../models/department";
 })
 export class DepartmentCardComponent {
   @Input({ required: true }) department!: Department;
+  @Input() isSelected: boolean = false;
   @Output() selected = new EventEmitter<Department>();
 }

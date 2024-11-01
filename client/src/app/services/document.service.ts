@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {environment} from "../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {RequestDocument} from "../models/request-document";
@@ -14,13 +14,22 @@ export class DocumentService {
 
   constructor(private http: HttpClient) {}
 
-  getAllDocuments() {
+  getAllDocuments(): Observable<Document[]> {
     return this.http.get<Document[]>(this.baseUrl);
   }
 
-  requestDocument(login: string, documentId: string) {
-    const request: RequestDocument = { userLogin: login, documentId };
-    return this.http.post(`${this.baseUrl}/request-document`, request);
+  getMyDocuments(): Observable<Document[]> {
+    return this.http.get<Document[]>(`${this.baseUrl}/my-documents`);
+  }
+
+  requestDocument(login: string, documentId: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/request-document`, { userLogin: login, documentId });
+  }
+
+  getDocumentsByDepartment(departmentId: string): Observable<Document[]> {
+    return this.getAllDocuments().pipe(
+      map(documents => documents.filter(doc => doc.departmentId === departmentId))
+    );
   }
 
   deleteDocument(login: string, documentId: string) {

@@ -1,4 +1,3 @@
-// routes.ts
 import { Routes } from '@angular/router';
 import { WelcomeComponent } from "./components/welcome/welcome.component";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
@@ -8,11 +7,25 @@ import { LoginComponent } from "./components/auth/login/login.component";
 import { ResetPasswordComponent } from "./components/auth/reset-password/reset-password.component";
 import { roleGuard } from './guards/auth.guard';
 
+function authGuard() {
+
+}
+
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'welcome',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [roleGuard(['guest'])]
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent,
+    canActivate: [roleGuard(['guest'])]
   },
   {
     path: 'welcome',
@@ -22,28 +35,20 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [roleGuard(['user'])]
+    canActivate: [authGuard, roleGuard(['user'])]
   },
   {
     path: 'employee',
     component: EmployeeComponent,
-    canActivate: [roleGuard(['employee'])]
+    canActivate: [authGuard, roleGuard(['employee'])]
   },
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [roleGuard(['admin'])]
-  },
-  {
-    path: 'login',
-    component: LoginComponent
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent,
+    canActivate: [authGuard, roleGuard(['admin'])]
   },
   {
     path: '**',
-    redirectTo: 'welcome'
+    redirectTo: 'dashboard'
   }
 ];

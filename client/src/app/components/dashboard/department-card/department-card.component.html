@@ -1,6 +1,12 @@
-<div class='mainpage-office' (click)="selected.emit(department)">
+<div
+  class="department-card"
+  [class.selected]="isSelected"
+  (click)="selected.emit(department)"
+>
   <h3>{{ department.name }}</h3>
   <p>{{ department.description }}</p>
-  <span>{{ department.phone }}</span>
-  <span>{{ department.email }}</span>
+  <div class="contact-info">
+    <span>{{ department.phoneNumber }}</span>
+    <span>{{ department.email }}</span>
+  </div>
 </div>

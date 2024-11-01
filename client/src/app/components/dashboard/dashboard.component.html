@@ -1,26 +1,31 @@
-<div class="logged-in-container">
-  <h2>Виберіть відділ:</h2>
-  <div class="mainpage-offices">
-    @for (department of departments(); track department.id) {
-      <app-department-card
-        [department]="department"
-        (selected)="onDepartmentSelect($event)"
-      />
-    }
-  </div>
+<main>
+  <section class="dashboard-section">
+    <h1>Департаменти та документи</h1>
 
-  @if (selectedDepartment()) {
-    <app-document-list
-      [department]="selectedDepartment()"
-      (documentRequested)="onDocumentRequest($event)"
-    />
-  }
-
-  @if (notification()) {
-    <div class="notification">
-      Дякуємо, документи на опрацюванні, очікуйте.<br>
-      Дата подання заявки: {{ requestDate() }}<br>
-      Очікувана дата отримання: {{ expectedDate() }}
+    <div class="departments-grid">
+      @for (dept of departments(); track dept.id) {
+        <app-department-card
+          [department]="dept"
+          [isSelected]="selectedDepartment()?.id === dept.id"
+          (selected)="onDepartmentSelect($event)"
+        />
+      }
     </div>
-  }
-</div>
+
+    @if (selectedDepartment()) {
+      <div class="documents-section">
+        <h2>Документи відділу {{ selectedDepartment()?.name }}</h2>
+        <div class="documents-grid">
+          @for (doc of departmentDocuments(); track doc.id) {
+            <app-document-card
+              [document]="doc"
+              [userDocumentStatus]="getDocumentStatus(doc.id)"
+              [requestDate]="getRequestDate(doc.id)"
+              [receivedDate]="getReceivedDate(doc.id)"
+              (requestDocument)="onRequestDocument($event)"></app-document-card>
+          }
+        </div>
+      </div>
+    }
+  </section>
+</main>

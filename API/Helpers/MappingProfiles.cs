@@ -36,7 +36,7 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.ReceivedDate, opt => opt.MapFrom(src => src.ReceivedDate));
         
         CreateMap<DocumentToUser, DocumentStatusDto>()
-            .ForMember(dest => dest.DocumentId, opt => opt.MapFrom(src => src.DocumentId))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.DocumentId))
             .ForMember(dest => dest.DocumentName, opt => opt.MapFrom(src => src.Document.Name))
             .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Document.Department.Name))
             .ForMember(dest => dest.RequestDate, opt => opt.MapFrom(src => src.RequestDate))

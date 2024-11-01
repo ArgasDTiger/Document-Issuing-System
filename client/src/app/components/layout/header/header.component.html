@@ -15,7 +15,7 @@
   </nav>
   <div class="nav-panel">
     @if (isLoggedIn()) {
-      <span class="user-greeting">Вітаємо, {{userFullName()}}</span>
+      <span class="user-greeting">Вітаємо, {{userFullName()}}!</span>
       <button (click)="logout()" class="logout-btn">Вийти</button>
     } @else {
       <button routerLink="/login" class="login-btn">Увійти</button>

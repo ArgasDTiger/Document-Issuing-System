@@ -11,87 +11,92 @@
         >
       </div>
       <div class="select-filters">
-        <select
-          (change)="onSortChange($event)"
-        >
+        <select (change)="onSortChange($event)">
           <option value="">Сортувати за...</option>
           <option value="firstName">Ім'ям</option>
-          <option value="requestDate">Датою запиту</option>
-          <option value="status">Статусом</option>
+          <option value="lastName">Прізвищем</option>
+          <option value="dateOfBirth">Датою народження</option>
         </select>
       </div>
     </div>
 
-  <div class="table-container">
-  <table>
-    <thead>
-    <tr>
-      <th>Користувач</th>
-      <th>Документ</th>
-      <th>Дата запиту</th>
-      <th>Статус документів</th>
-      <th>Дії</th>
-    </tr>
-    </thead>
-    <tbody>
-      @for (doc of activeDocuments(); track doc.documentId) {
+    <div class="table-container">
+      <table>
+        <thead>
         <tr>
-          <td>{{ doc.firstName }} {{ doc.lastName }}</td>
-          <td>{{ doc.documentName }}</td>
-          <td>{{ doc.requestDate | date:'short' }}</td>
-          <td>
-            @switch (doc.status) {
-              @case ('On process') {
-                <span class="status status-processing">На опрацюванні</span>
-              }
-              @case ('Received') {
-                <span class="status status-received">Видано</span>
-              }
-            }
-          </td>
-          <td>
-            @if (doc.status === 'On process') {
-              <button
-                class="action-button"
-                (click)="completeDocument(doc.userLogin, doc.documentId)"
-              >
-                Видати
-              </button>
-            }
-          </td>
+          <th>Ім'я</th>
+          <th>Прізвище</th>
+          <th>По-батькові</th>
+          <th>Пошта</th>
+          <th>Дата народження</th>
+          <th>Документ</th>
+          <th>Дата запиту</th>
+          <th>Статус документів</th>
+          <th>Дії</th>
         </tr>
-      } @empty {
-        <tr>
-          <td colspan="6" class="empty-state">Немає користувачів для відображення</td>
-        </tr>
+        </thead>
+        <tbody>
+          @for (doc of activeDocuments(); track doc.id) {
+            <tr>
+              <td>{{ doc.firstName }}</td>
+              <td>{{ doc.lastName }}</td>
+              <td>{{ doc.middleName }}</td>
+              <td>{{ doc.email }}</td>
+              <td>{{ doc.dateOfBirth | date:'mediumDate':'':'uk' }}</td>
+              <td>{{ doc.name }}</td>
+              <td>{{ doc.requestDate | date:'short':'':'uk' }}</td>
+              <td>
+                @switch (doc.status) {
+                  @case ('On process') {
+                    <span class="status status-processing">На опрацюванні</span>
+                  }
+                  @case ('Received') {
+                    <span class="status status-received">Видано</span>
+                  }
+                }
+              </td>
+              <td>
+                @if (doc.status === 'On process') {
+                  <button
+                    class="action-button"
+                    (click)="openModal(doc.userLogin, doc.id)"
+                  >
+                    Видати
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="empty-state">Немає користувачів для відображення</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button (click)="onPageChange(currentPage() - 1)" [disabled]="!hasPreviousPage()">&lt;</button>
+      @for (page of [].constructor(totalPages()); track $index) {
+        <button
+          (click)="onPageChange($index + 1)"
+          [class.active]="currentPage() === $index + 1"
+        >
+          {{ $index + 1 }}
+        </button>
       }
-    </tbody>
-  </table>
-  </div>
+      <button (click)="onPageChange(currentPage() + 1)" [disabled]="!hasNextPage()">&gt;</button>
+    </div>
 
-  <div class="pagination">
-    <button
-      (click)="onPageChange(currentPage() - 1)"
-      [disabled]="!hasPreviousPage()"
-    >
-      &lt;
-    </button>
-
-    @for (page of [].constructor(totalPages()); track $index) {
-      <button
-        (click)="onPageChange($index + 1)"
-        [class.active]="currentPage() === $index + 1"
-      >
-        {{ $index + 1 }}
-      </button>
-    }
-
-    <button
-      (click)="onPageChange(currentPage() + 1)"
-      [disabled]="!hasNextPage()"
-    >
-      &gt;
-    </button>
-  </div>
+    <div class="modal-overlay" [class.show]="isModalVisible">
+      <div class="modal-content">
+        <h2>Підтвердження дії</h2>
+        <p>Ви впевнені, що хочете видати цей документ?</p>
+        <div class="modal-actions">
+          <button class="action-button" (click)="confirmAction()">Так, видати</button>
+          <button class="cancel-button" (click)="closeModal()">Скасувати</button>
+        </div>
+      </div>
+    </div>
   </section>
 </main>

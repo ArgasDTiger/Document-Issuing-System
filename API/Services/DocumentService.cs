@@ -31,7 +31,7 @@ public class DocumentService : IDocumentService
 
         return new DocumentStatusDto
         {
-            DocumentId = documentToUser.DocumentId,
+            Id = documentToUser.DocumentId,
             DocumentName = documentToUser.Document.Name,
             DepartmentName = documentToUser.Document.Department.Name,
             RequestDate = documentToUser.RequestDate,
@@ -50,7 +50,7 @@ public class DocumentService : IDocumentService
         
         return userDocuments.Select(doc => new DocumentStatusDto
         {
-            DocumentId = doc.DocumentId,
+            Id = doc.DocumentId,
             DocumentName = doc.Document.Name,
             DepartmentName = doc.Document.Department.Name,
             RequestDate = doc.RequestDate,

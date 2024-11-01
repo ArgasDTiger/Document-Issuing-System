@@ -2,7 +2,7 @@ namespace API.Dtos;
 
 public class DocumentStatusDto
 {
-    public Guid DocumentId { get; set; }
+    public Guid Id { get; set; }
     public string DocumentName { get; set; }
     public string DepartmentName { get; set; }
     public DateTime RequestDate { get; set; }

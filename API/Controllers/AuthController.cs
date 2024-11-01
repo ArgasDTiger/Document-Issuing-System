@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
         var user = await _userManager.Users
-            .Include(u => u.Department)  // Include Department
+            .Include(u => u.Department)
             .FirstOrDefaultAsync(x => x.UserName == loginDto.UserLogin || x.Email == loginDto.UserLogin);
 
         if (user == null)

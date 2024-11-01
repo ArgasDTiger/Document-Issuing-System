@@ -1,0 +1,73 @@
+.document-card {
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  background: white;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.document-card.status-no-operations {
+  border-color: var(--accent);
+}
+
+.document-card.status-on-process {
+  border-color: var(--accent2);
+}
+
+.document-card.status-received {
+  border-color: var(--second);
+}
+
+h3 {
+  margin: 0 0 1rem;
+  color: var(--accent);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.status-no-operations .status-badge {
+  background-color: rgba(var(--accent--rgb), 0.1);
+  color: var(--accent);
+}
+
+.status-on-process .status-badge {
+  background-color: rgba(var(--accent2--rgb), 0.1);
+  color: var(--accent2);
+}
+
+.status-received .status-badge {
+  background-color: rgba(var(--second--rgb), 0.1);
+  color: var(--second);
+}
+
+.date-info {
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+
+.date-info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+.request-button {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.request-button:hover {
+  background-color: var(--accent2);
+}

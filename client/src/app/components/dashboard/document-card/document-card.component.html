@@ -1,0 +1,23 @@
+<div class="document-card" [class]="'status-' + userDocumentStatus.toLowerCase()">
+  <h3>{{ document.documentName }}</h3>
+
+  <div class="status-badge">{{ getStatusText() }}</div>
+
+  @if (requestDate) {
+    <div class="date-info">
+      <p>Дата запиту: {{ requestDate | date:'short' }}</p>
+      @if (userDocumentStatus === 'On process') {
+        <p>Очікувана дата: {{ getExpectedDate() | date:'short' }}</p>
+      }
+      @if (receivedDate) {
+        <p>Дата отримання: {{ receivedDate | date:'short' }}</p>
+      }
+    </div>
+  }
+
+  @if (userDocumentStatus === 'No operations') {
+    <button class="request-button" (click)="requestDocument.emit(document.id)">
+      Подати запит
+    </button>
+  }
+</div>
