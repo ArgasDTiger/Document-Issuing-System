@@ -46,7 +46,7 @@
 
           <input type="text"
                  formControlName="userLogin"
-                 placeholder="Логін"
+                 placeholder="Логін або пошта"
                  required
                  [disabled]="isLoading()">
 
@@ -56,11 +56,11 @@
                    placeholder="Пароль"
                    required
                    [disabled]="isLoading()">
-            <span class="material-symbols-rounded"
-                  (click)="togglePassword()">
-              {{ showPassword() ? 'password_2_off' : 'password' }}
+            <span class="material-symbols-rounded" (click)="togglePassword()">
+              <i [ngClass]="showPassword() ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
             </span>
           </div>
+
 
           <div>
             <button type="submit"

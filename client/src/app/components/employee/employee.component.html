@@ -1,6 +1,6 @@
 <main>
   <section class="users-section">
-    <h1>Управління документами користувачів</h1>
+    <h1>{{ currentEmployee().department.name }}</h1>
 
     <div class="filters-container">
       <div class="search-container">
@@ -17,13 +17,19 @@
           <option value="lastName">Прізвищем</option>
           <option value="dateOfBirth">Датою народження</option>
         </select>
+        <select (change)="onSortDirectionChange($event)">
+          <option value="asc">За зростанням</option>
+          <option value="desc">За спаданням</option>
+        </select>
       </div>
     </div>
+
 
     <div class="table-container">
       <table>
         <thead>
         <tr>
+          <th>Логін</th>
           <th>Ім'я</th>
           <th>Прізвище</th>
           <th>По-батькові</th>
@@ -38,11 +44,12 @@
         <tbody>
           @for (doc of activeDocuments(); track doc.id) {
             <tr>
+              <td>{{ doc.userLogin }}</td>
               <td>{{ doc.firstName }}</td>
               <td>{{ doc.lastName }}</td>
               <td>{{ doc.middleName }}</td>
               <td>{{ doc.email }}</td>
-              <td>{{ doc.dateOfBirth | date:'mediumDate':'':'uk' }}</td>
+              <td>{{ doc.dateOfBirth | date: 'dd/MM/yyyy' }}</td>
               <td>{{ doc.name }}</td>
               <td>{{ doc.requestDate | date:'short':'':'uk' }}</td>
               <td>
@@ -68,7 +75,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="9" class="empty-state">Немає користувачів для відображення</td>
+              <td colspan="10" class="empty-state">Немає користувачів для відображення</td>
             </tr>
           }
         </tbody>
@@ -88,15 +95,14 @@
       <button (click)="onPageChange(currentPage() + 1)" [disabled]="!hasNextPage()">&gt;</button>
     </div>
 
-    <div class="modal-overlay" [class.show]="isModalVisible">
-      <div class="modal-content">
-        <h2>Підтвердження дії</h2>
-        <p>Ви впевнені, що хочете видати цей документ?</p>
-        <div class="modal-actions">
-          <button class="action-button" (click)="confirmAction()">Так, видати</button>
-          <button class="cancel-button" (click)="closeModal()">Скасувати</button>
-        </div>
-      </div>
-    </div>
+    <app-modal
+      [isVisible]="isModalVisible"
+      title="Підтвердження дії"
+      message="Ви впевнені, що хочете видати цей документ?"
+      confirmText="Так, видати"
+      cancelText="Скасувати"
+      (confirm)="confirmAction()"
+      (cancel)="closeModal()"
+    ></app-modal>
   </section>
 </main>

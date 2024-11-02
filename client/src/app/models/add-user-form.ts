@@ -2,6 +2,6 @@ export interface AddUserForm {
   firstName: string;
   lastName: string;
   middleName: string;
-  birthdate: Date;
+  dateOfBirth: Date;
   email: string;
 }

@@ -1,43 +1,49 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { DepartmentService } from "../../services/department.service";
 import { Department } from "../../models/department";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { DocumentService } from "../../services/document.service";
+import { AuthService } from "../../services/auth.service";
+import { DatePipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Document } from "../../models/document";
-import { DocumentService } from "../../services/document.service";
-import { Dialog } from '@angular/cdk/dialog';
-import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component";
 import { DepartmentCardComponent } from "./department-card/department-card.component";
 import { DocumentCardComponent } from "./document-card/document-card.component";
-import { AuthService } from "../../services/auth.service";
+import { ModalComponent } from "../modal/modal.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     DatePipe,
-    DocumentCardComponent,
+    JsonPipe,
     NgForOf,
     NgIf,
     DepartmentCardComponent,
-    DocumentCardComponent
+    DocumentCardComponent,
+    ModalComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private departmentService = inject(DepartmentService);
   private documentService = inject(DocumentService);
-  private authService = inject(AuthService); // Inject AuthService
-  private dialog = inject(Dialog);
+  private authService = inject(AuthService);
 
-  departments = toSignal(this.departmentService.getAllDepartments(), { initialValue: [] as Department[] });
+  departments = toSignal(
+    this.departmentService.getAllDepartments(),
+    { initialValue: [] as Department[] }
+  );
+
   selectedDepartment = signal<Department | null>(null);
   departmentDocuments = signal<Document[]>([]);
-  userDocuments = signal<any[]>([]);
+  userDocuments = signal<Document[]>([]);
   currentUserLogin: string | null = null;
 
-  constructor() {
+  showRequestModal = false;
+  documentToRequest: string | null = null;
+
+  ngOnInit() {
     this.loadUserDocuments();
     this.getCurrentUserLogin();
   }
@@ -56,44 +62,50 @@ export class DashboardComponent {
 
   onDepartmentSelect(department: Department) {
     this.selectedDepartment.set(department);
-    this.departmentDocuments.set(department.documents || []);
+    const mappedDocuments = (department.documents || []).map(doc => ({
+      ...doc,
+      documentName: doc.name
+    }));
+    this.departmentDocuments.set(mappedDocuments);
   }
 
   getDocumentStatus(documentId: string): string {
-    const userDoc = this.userDocuments().find(d => d.documentId === documentId);
+    const userDoc = this.userDocuments().find(d => d.id === documentId);
     return userDoc?.status || 'No operations';
   }
 
   getRequestDate(documentId: string): Date | null {
-    const userDoc = this.userDocuments().find(d => d.documentId === documentId);
+    const userDoc = this.userDocuments().find(d => d.id === documentId);
     return userDoc?.requestDate ? new Date(userDoc.requestDate) : null;
   }
 
   getReceivedDate(documentId: string): Date | null {
-    const userDoc = this.userDocuments().find(d => d.documentId === documentId);
+    const userDoc = this.userDocuments().find(d => d.id === documentId);
     return userDoc?.receivedDate ? new Date(userDoc.receivedDate) : null;
   }
 
-  onRequestDocument(documentId: string) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Підтвердження запиту',
-        message: 'Ви дійсно бажаєте подати запит на цей документ?'
-      }
-    });
+  openRequestModal(documentId: string) {
+    this.documentToRequest = documentId;
+    this.showRequestModal = true;
+  }
 
-    dialogRef.closed.subscribe(result => {
-      if (result && this.currentUserLogin) { // Use currentUserLogin when requesting the document
-        this.documentService.requestDocument(this.currentUserLogin, documentId).subscribe({
+  closeRequestModal() {
+    this.showRequestModal = false;
+    this.documentToRequest = null;
+  }
+
+  confirmRequest() {
+    if (this.documentToRequest && this.currentUserLogin) {
+      this.documentService.requestDocument(this.currentUserLogin, this.documentToRequest)
+        .subscribe({
           next: () => {
             this.loadUserDocuments();
+            this.closeRequestModal();
           },
-          error: (error) => {
-            console.error('Error requesting document:', error);
+          error: () => {
             alert('Помилка при запиті документа');
           }
         });
-      }
-    });
+    }
   }
 }

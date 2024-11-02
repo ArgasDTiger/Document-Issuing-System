@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../environments/environment';
-import {AddUserForm} from "../models/add-user-form";
-import {PaginationParameters} from "../models/pagination-parameters";
+import { AddUserForm } from "../models/add-user-form";
+import { PaginationParameters } from "../models/pagination-parameters";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class UserService {
 
   getAllUsers(
     sortField?: string,
-    sortDirection?: string,
+    sortDirection: string = 'asc',
     searchString?: string,
     pagination?: PaginationParameters
   ): Observable<{
@@ -27,6 +27,7 @@ export class UserService {
     hasPrevious: boolean;
   }> {
     let params: any = {};
+
     if (sortField) params.sortField = sortField;
     if (sortDirection) params.sortDirection = sortDirection;
     if (searchString) params.searchString = searchString;
@@ -37,6 +38,7 @@ export class UserService {
 
     return this.http.get<any>(this.baseUrl, { params });
   }
+
 
   addUser(userData: AddUserForm): Observable<User> {
     return this.http.post<User>(`${this.baseUrl}/add-user`, userData);

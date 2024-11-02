@@ -1,9 +1,32 @@
 <div class="container">
   <div class="info">
     <h1>Система запиту документів</h1>
-    <p>Ласкаво просимо до нашої системи запиту документів.<br>
-      Тут ви можете зручно замовити необхідні вам документи з різних відділів нашої організації.</p>
-    <p>Для отримання доступу до системи, будь ласка, увійдіть у свій обліковий запис.</p>
-    <button class="login-button" routerLink="/login">Увійти в систему</button>
+    <ng-container [ngSwitch]="userStatus">
+      <ng-template ngSwitchCase="unauthorized">
+        <p>Ласкаво просимо до нашої системи запиту документів.<br>
+          Тут ви можете зручно замовити необхідні вам документи з різних відділів нашої організації.</p>
+        <p>Для отримання доступу до системи, будь ласка, увійдіть у свій обліковий запис.</p>
+        <button class="login-button" routerLink="/login">Увійти в систему</button>
+      </ng-template>
+
+      <ng-template ngSwitchCase="admin">
+        <p>Раді вас бачити, {{ user.firstName }} {{ user.middleName }}!<br></p>
+        <p>Можете повернутися до перегляду та керування користувачами, натиснувши на кнопку нижче</p>
+        <button class="login-button" routerLink="/admin">Переглянути користувачів</button>
+      </ng-template>
+
+
+      <ng-template ngSwitchCase="employee">
+        <p>Раді вас бачити, {{ user.firstName }} {{ user.middleName }}!<br></p>
+        <p>Можете повернутися до перегляду та керування користувачами, натиснувши на кнопку нижче</p>
+        <button class="login-button" routerLink="/employee">Переглянути користувачів</button>
+      </ng-template>
+
+      <ng-template ngSwitchCase="user">
+        <p>Раді вас бачити, {{ user.firstName }} {{ user.middleName }}!<br></p>
+        <p>Можете повернутися до перегляду та запиту доступних документів, натиснувши на кнопку нижче</p>
+        <button class="login-button" routerLink="/dashboard">Переглянути документи</button>
+      </ng-template>
+    </ng-container>
   </div>
 </div>

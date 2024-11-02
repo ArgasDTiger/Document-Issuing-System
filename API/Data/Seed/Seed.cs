@@ -1,5 +1,6 @@
 using API.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Seed;
 
@@ -7,7 +8,7 @@ public class Seed
 {
     private static Guid? _locationIssuerId;
     private static Guid? _incomeIssuerId;
-    
+
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
@@ -16,16 +17,12 @@ public class Seed
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         await SeedRoles(roleManager);
-        
         await SeedAdmin(userManager);
-
         await SeedDepartments(context);
-        
         await SeedEmployees(userManager);
-        
         await SeedDocuments(context);
     }
-    
+
     private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
     {
         string[] roleNames = { "Admin", "Employee", "User" };
@@ -41,31 +38,36 @@ public class Seed
 
     private static async Task SeedAdmin(UserManager<User> userManager)
     {
-        var adminUser = new User
+        if (!await userManager.Users.AnyAsync(u => u.UserName == "g_vasylenko5467"))
         {
-            UserName = "g_vasylenko",
-            Email = "vasylenko.grygoriy48@gmail.com",
-            FirstName = "Григорій",
-            MiddleName = "Ігорович",
-            LastName = "Василенко",
-            DateOfBirth = new DateTime(1995, 11, 24)
-        };
+            var adminUser = new User
+            {
+                UserName = "g_vasylenko5467",
+                Email = "vasylenko.grygoriy48@gmail.com",
+                FirstName = "Григорій",
+                MiddleName = "Ігорович",
+                LastName = "Василенко",
+                DateOfBirth = new DateTime(1995, 11, 24)
+            };
 
-        var result = await userManager.CreateAsync(adminUser, "Admin000!");
+            var result = await userManager.CreateAsync(adminUser, "Admin000!");
 
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(adminUser, "Admin");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
         }
     }
-    
+
     private static async Task SeedEmployees(UserManager<User> userManager)
     {
+        var existingUsers = await userManager.Users.Select(u => u.UserName).ToListAsync();
+
         var employees = new List<User>()
         {
             new User()
             {
-                UserName = "m_petrenko",
+                UserName = "m_petrenko1234",
                 Email = "mykhailo.petrenko123@gmail.com",
                 FirstName = "Михайло",
                 MiddleName = "Сергійович",
@@ -75,7 +77,7 @@ public class Seed
             },
             new User()
             {
-                UserName = "v_kravchuk",
+                UserName = "v_kravchuk5467",
                 Email = "vasylyna.kravchuk777@gmail.com",
                 FirstName = "Василина",
                 MiddleName = "Петрівна",
@@ -87,58 +89,66 @@ public class Seed
 
         foreach (var employee in employees)
         {
-            var result = await userManager.CreateAsync(employee, "Employee000!");
-
-            if (result.Succeeded)
+            if (!existingUsers.Contains(employee.UserName))
             {
-                await userManager.AddToRoleAsync(employee, "Employee");
+                var result = await userManager.CreateAsync(employee, "Employee000!");
+
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(employee, "Employee");
+                }
             }
         }
-        
     }
-    
+
     private static async Task SeedDepartments(DocumentDbContext context)
     {
-        var hrs = new List<Department>()
+        if (!await context.Departments.AnyAsync())
         {
-            new Department()
+            var hrs = new List<Department>()
             {
-                Name = "Відділ видачі довідок про місце проживання",
-                Email = "locationissuer@gmail.com",
-                PhoneNumber = "0965685995"
-            },
-            new Department()
-            {
-                Name = "Відділ видачі довідок про доходи",
-                Email = "incomeissuer@gmail.com",
-                PhoneNumber = "0660562775"
-            }
-        };
-        
-        _locationIssuerId = hrs[0].Id;
-        _incomeIssuerId = hrs[1].Id;
+                new Department()
+                {
+                    Name = "Відділ видачі довідок про місце проживання",
+                    Email = "locationissuer@gmail.com",
+                    PhoneNumber = "0965685995"
+                },
+                new Department()
+                {
+                    Name = "Відділ видачі довідок про доходи",
+                    Email = "incomeissuer@gmail.com",
+                    PhoneNumber = "0660562775"
+                }
+            };
 
-        await context.Departments.AddRangeAsync(hrs);
-        await context.SaveChangesAsync();
+            await context.Departments.AddRangeAsync(hrs);
+            await context.SaveChangesAsync();
+
+            _locationIssuerId = hrs[0].Id;
+            _incomeIssuerId = hrs[1].Id;
+        }
     }
-    
+
     private static async Task SeedDocuments(DocumentDbContext context)
     {
-        var documents = new List<Document>()
+        if (!await context.Documents.AnyAsync())
         {
-            new Document()
+            var documents = new List<Document>()
             {
-                Name = "Довідка про місце проживання",
-                DepartmentId = _locationIssuerId ?? Guid.Empty
-            },
-            new Document()
-            {
-                Name = "Довідка про доходи",
-                DepartmentId = _incomeIssuerId ?? Guid.Empty
-            }
-        };
+                new Document()
+                {
+                    Name = "Довідка про місце проживання",
+                    DepartmentId = _locationIssuerId ?? Guid.Empty
+                },
+                new Document()
+                {
+                    Name = "Довідка про доходи",
+                    DepartmentId = _incomeIssuerId ?? Guid.Empty
+                }
+            };
 
-        await context.Documents.AddRangeAsync(documents);
-        await context.SaveChangesAsync();
+            await context.Documents.AddRangeAsync(documents);
+            await context.SaveChangesAsync();
+        }
     }
 }

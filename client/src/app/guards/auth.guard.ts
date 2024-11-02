@@ -1,54 +1,64 @@
-import {CanActivateFn, Router} from "@angular/router";
-import {map, take} from "rxjs";
-import {AuthService} from "../services/auth.service";
-import {inject} from "@angular/core";
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { map, Observable } from 'rxjs';
 
-export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
+export function authGuard(allowedRoles?: string[]): CanActivateFn {
   return (route, state) => {
     const router = inject(Router);
     const authService = inject(AuthService);
 
-    return authService.currentUser$.pipe(
-      take(1),
-      map(user => {
-        // Special handling for 'guest' role
-        if (allowedRoles.includes('guest')) {
-          if (!user) return true;
-          redirectToUserHome(router, user.role);
-          return false;
-        }
+    return new Observable<boolean>(observer => {
+      authService.ensureInitialized()
+        .then(() => {
+          authService.currentUser$.pipe(
+            map(user => {
+              if (!user) {
+                router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+                return false;
+              }
 
-        if (!user) {
-          router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
-          return false;
-        }
+              if (!allowedRoles) {
+                return true;
+              }
 
-        const userRole = user.role.toLowerCase();
-        const normalizedAllowedRoles = allowedRoles.map(role => role.toLowerCase());
+              const hasRole = allowedRoles.some(role =>
+                role.toLowerCase() === user.role.toLowerCase()
+              );
 
-        if (normalizedAllowedRoles.includes(userRole)) {
-          return true;
-        }
+              if (!hasRole) {
+                redirectToUserHome(router, user.role);
+                return false;
+              }
 
-        redirectToUserHome(router, userRole);
-        return false;
-      })
-    );
+              return true;
+            })
+          ).subscribe({
+            next: (result) => {
+              observer.next(result);
+              observer.complete();
+            },
+            error: (error) => {
+              observer.error(error);
+            }
+          });
+        })
+        .catch(error => {
+          console.error('Auth initialization failed in guard:', error);
+          router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+          observer.next(false);
+          observer.complete();
+        });
+    });
   };
-};
+}
 
 function redirectToUserHome(router: Router, role: string): void {
-  switch (role.toLowerCase()) {
-    case 'admin':
-      router.navigate(['/admin']);
-      break;
-    case 'employee':
-      router.navigate(['/employee']);
-      break;
-    case 'user':
-      router.navigate(['/dashboard']);
-      break;
-    default:
-      router.navigate(['/welcome']);
-  }
+  const routes: { [key: string]: string } = {
+    admin: '/admin',
+    employee: '/employee',
+    user: '/dashboard'
+  };
+  const targetRoute = routes[role.toLowerCase()] || routes.user;
+  router.navigate([targetRoute]);
 }

@@ -1,17 +1,18 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { DocumentService } from "../../services/document.service";
 import { DatePipe } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { UserService } from "../../services/user.service";
 import { AuthService } from "../../services/auth.service";
-import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from "rxjs";
+import { BehaviorSubject, Subject, debounceTime, distinctUntilChanged, switchMap, merge, startWith } from "rxjs";
 import { User } from "../../models/user";
 import { FilterState } from "../../models/filter-state";
+import { ModalComponent } from "../modal/modal.component";
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, ModalComponent],
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.css']
 })
@@ -23,9 +24,12 @@ export class EmployeeComponent {
   isModalVisible = false;
   documentToComplete: { userLogin: string; documentId: string } | null = null;
 
+  private refreshTrigger = new Subject<void>();
+
   private filterState = new BehaviorSubject<FilterState>({
     search: '',
     sortField: '',
+    sortDirection: 'asc',
     pageNumber: 1,
     pageSize: 10
   });
@@ -33,17 +37,25 @@ export class EmployeeComponent {
   currentEmployee = toSignal(this.authService.currentUser$);
 
   private users = toSignal(
-    this.filterState.pipe(
-      debounceTime(300),
-      distinctUntilChanged((prev, curr) =>
-        prev.search === curr.search &&
-        prev.sortField === curr.sortField &&
-        prev.pageNumber === curr.pageNumber
+    merge(
+      this.filterState.pipe(
+        debounceTime(300),
+        distinctUntilChanged((prev, curr) =>
+          prev.search === curr.search &&
+          prev.sortField === curr.sortField &&
+          prev.sortDirection === curr.sortDirection &&
+          prev.pageNumber === curr.pageNumber
+        )
       ),
+      this.refreshTrigger.pipe(
+        switchMap(() => this.filterState)
+      )
+    ).pipe(
+      startWith(this.filterState.value),
       switchMap(filter =>
         this.userService.getAllUsers(
           filter.sortField,
-          undefined,
+          filter.sortDirection,
           filter.search,
           { pageNumber: filter.pageNumber, pageSize: filter.pageSize }
         )
@@ -86,35 +98,17 @@ export class EmployeeComponent {
   hasNextPage = computed(() => this.users().hasNext);
   hasPreviousPage = computed(() => this.users().hasPrevious);
 
-  onSortChange(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    this.updateFilterState({ sortField: select.value });
-  }
-
-  onSearchChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.updateFilterState({ search: input.value });
-  }
-
-  onPageChange(newPage: number) {
-    if (newPage >= 1 && newPage <= this.totalPages()) {
-      this.updateFilterState({ pageNumber: newPage });
-    }
-  }
-
   completeDocument(userLogin: string, documentId: string) {
-    if (confirm('Ви впевнені, що хочете видати цей документ?')) {
-      this.documentService.completeDocument(userLogin, documentId)
-        .subscribe({
-          next: () => {
-            this.filterState.next(this.filterState.value);
-          },
-          error: (error) => {
-            console.error('Error completing document:', error);
-            alert('Помилка при оновленні статусу документа');
-          }
-        });
-    }
+    this.documentService.completeDocument(userLogin, documentId)
+      .subscribe({
+        next: () => {
+          this.refreshTrigger.next();
+        },
+        error: (error) => {
+          console.error('Error completing document:', error);
+          alert('Помилка при оновленні статусу документа');
+        }
+      });
   }
 
   openModal(userLogin: string, documentId: string) {
@@ -132,6 +126,27 @@ export class EmployeeComponent {
       const { userLogin, documentId } = this.documentToComplete;
       this.completeDocument(userLogin, documentId);
       this.closeModal();
+    }
+  }
+
+  onSortDirectionChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.updateFilterState({ sortDirection: select.value as 'asc' | 'desc' });
+  }
+
+  onSortChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.updateFilterState({ sortField: select.value });
+  }
+
+  onSearchChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.updateFilterState({ search: input.value });
+  }
+
+  onPageChange(newPage: number) {
+    if (newPage >= 1 && newPage <= this.totalPages()) {
+      this.updateFilterState({ pageNumber: newPage });
     }
   }
 

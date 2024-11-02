@@ -1,6 +1,7 @@
 export interface Document {
   id: string;
-  documentName: string;
+  name?: string;
+  documentName?: string;
   type: string;
   requestDate: Date;
   expectedDate: Date;

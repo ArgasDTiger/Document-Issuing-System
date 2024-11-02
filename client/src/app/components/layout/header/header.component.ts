@@ -1,8 +1,9 @@
-import {Component, inject} from '@angular/core';
-import {AuthService} from "../../../services/auth.service";
-import {toSignal} from "@angular/core/rxjs-interop";
-import {map} from "rxjs";
-import {RouterLink, RouterLinkActive} from "@angular/router";
+import { Component, inject } from '@angular/core';
+import { AuthService } from "../../../services/auth.service";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { map } from "rxjs";
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import {ModalComponent} from "../../modal/modal.component";
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,8 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    ModalComponent
   ],
   styleUrls: ['./header.component.css']
 })
@@ -24,13 +26,6 @@ export class HeaderComponent {
     { initialValue: false }
   );
 
-  userRole = toSignal(
-    this.authService.currentUser$.pipe(
-      map(user => user?.role)
-    ),
-    { initialValue: null }
-  );
-
   userFullName = toSignal(
     this.authService.currentUser$.pipe(
       map(user => user ? `${user.firstName} ${user.middleName}` : '')
@@ -38,7 +33,18 @@ export class HeaderComponent {
     { initialValue: '' }
   );
 
-  logout() {
+  showLogoutModal = false;
+
+  openLogoutModal() {
+    this.showLogoutModal = true;
+  }
+
+  closeLogoutModal() {
+    this.showLogoutModal = false;
+  }
+
+  confirmLogout() {
     this.authService.logout();
+    this.closeLogoutModal();
   }
 }

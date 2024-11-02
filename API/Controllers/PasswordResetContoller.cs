@@ -42,7 +42,7 @@ public class PasswordResetController : ControllerBase
         var frontendUrl = _configuration["FrontendUrl"];
         var resetLink = $"{frontendUrl}/reset-password?email={HttpUtility.UrlEncode(user.Email)}&token={encodedToken}";
 
-        var emailSubject = "Password Reset Request";
+        var emailSubject = "Відновлення паролю";
         var emailBody = $@"
             Вітаю {user.FirstName} {user.MiddleName},<br><br>
             Ми отримали запит на зміну паролю для вашого облікового запису.<br>

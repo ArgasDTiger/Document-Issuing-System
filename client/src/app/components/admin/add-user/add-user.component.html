@@ -37,12 +37,12 @@
         <input
           type="text"
           formControlName="middleName"
-          placeholder="По батькові"
+          placeholder="По-батькові"
           [class.invalid]="isFieldInvalid('middleName')"
           (blur)="onBlur('middleName')"
         >
         @if (userForm.get('middleName')?.errors?.['required'] && userForm.get('middleName')?.touched) {
-          <span class="validation-error">По батькові обов'язкове</span>
+          <span class="validation-error">По-батькові обов'язкове</span>
         }
       </div>
 

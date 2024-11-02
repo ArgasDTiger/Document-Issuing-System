@@ -1,6 +1,6 @@
 <main>
   <section class="dashboard-section">
-    <h1>Департаменти та документи</h1>
+    <h1>Відділи та документи</h1>
 
     <div class="departments-grid">
       @for (dept of departments(); track dept.id) {
@@ -22,10 +22,22 @@
               [userDocumentStatus]="getDocumentStatus(doc.id)"
               [requestDate]="getRequestDate(doc.id)"
               [receivedDate]="getReceivedDate(doc.id)"
-              (requestDocument)="onRequestDocument($event)"></app-document-card>
+              (requestDocument)="openRequestModal(doc.id)"
+            ></app-document-card>
           }
         </div>
       </div>
     }
+
+    <app-modal
+      [isVisible]="showRequestModal"
+      [title]="'Підтвердження запиту'"
+      [message]="'Ви впевнені, що хочете подати запит на цей документ?'"
+      [confirmText]="'Так, подати запит'"
+      [cancelText]="'Скасувати'"
+      (confirm)="confirmRequest()"
+      (cancel)="closeRequestModal()"
+    >
+    </app-modal>
   </section>
 </main>

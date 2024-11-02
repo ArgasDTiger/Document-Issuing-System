@@ -24,7 +24,8 @@ public static class ServicesExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddDbContext<DocumentDbContext>(options =>
-            options.UseSqlite(configuration.GetConnectionString("SQLiteConnection")));
+            options.UseMySql(configuration.GetConnectionString("MySqlConnection"), 
+                ServerVersion.AutoDetect(configuration.GetConnectionString("MySqlConnection"))));
 
         services.AddScoped<IDocumentRepository, DocumentRepository>();
         services.AddScoped<ITokenService, TokenService>();

@@ -20,12 +20,14 @@ public class DocumentsController : ControllerBase
         _documentService = documentService;
     }
     
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult> GetDocuments()
     {
         return Ok(await _documentRepository.GetAllAsync());
     }
 
+    [Authorize]
     [HttpGet("my-documents")]
     public async Task<ActionResult<IEnumerable<DocumentStatusDto>>> GetUserDocuments()
     {
@@ -37,7 +39,7 @@ public class DocumentsController : ControllerBase
         return Ok(documents);
     }
 
-
+    [Authorize]
     [HttpGet("status/{documentId}")]
     public async Task<ActionResult<DocumentStatusDto>> GetDocumentStatus([FromBody] DocumentRequestDto requestDto)
     {
@@ -48,6 +50,7 @@ public class DocumentsController : ControllerBase
         return Ok(documentStatus);
     }
 
+    [Authorize]
     [HttpPost("request-document")]
     public async Task<ActionResult> RequestDocument([FromBody] DocumentRequestDto requestDto)
     {
@@ -55,9 +58,8 @@ public class DocumentsController : ControllerBase
         return result ? Ok(new { Message = "Document request processed successfully" }) 
             : BadRequest(new { Message = "Failed to process document request" });
     }
-
-    // TODO create deletedto
-    // TODO remove /documentid
+    
+    [Authorize(Roles = "Admin")]
     [HttpDelete("delete-document/{documentId}")]
     public async Task<ActionResult> DeleteDocument([FromBody] DocumentRequestDto requestDto)
     {
@@ -66,6 +68,7 @@ public class DocumentsController : ControllerBase
             : BadRequest(new { Message = "Failed to delete document" });
     }
 
+    [Authorize(Roles = "Admin,Employee")]
     [HttpPost("complete-document")]
     public async Task<ActionResult> CompleteDocument([FromBody] DocumentRequestDto requestDto)
     {

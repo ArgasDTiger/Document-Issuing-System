@@ -2,7 +2,6 @@ using API.Dtos;
 
 namespace API.Interfaces;
 
-
 public interface IDocumentService
 {
     Task<bool> RequestDocument(string userLogin, Guid documentId);

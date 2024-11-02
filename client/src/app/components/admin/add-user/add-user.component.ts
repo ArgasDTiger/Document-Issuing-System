@@ -52,7 +52,7 @@ export class AddUserComponent {
       middleName: this.userForm.get('middleName')?.value,
       lastName: this.userForm.get('lastName')?.value,
       email: this.userForm.get('email')?.value,
-      birthdate: this.userForm.get('birthdate')?.value
+      dateOfBirth: this.userForm.get('birthdate')?.value
     };
 
     this.userService.addUser(userData).subscribe({

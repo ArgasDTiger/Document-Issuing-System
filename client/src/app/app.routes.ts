@@ -5,11 +5,8 @@ import { EmployeeComponent } from "./components/employee/employee.component";
 import { AdminComponent } from "./components/admin/admin.component";
 import { LoginComponent } from "./components/auth/login/login.component";
 import { ResetPasswordComponent } from "./components/auth/reset-password/reset-password.component";
-import { roleGuard } from './guards/auth.guard';
-
-function authGuard() {
-
-}
+import { authGuard } from './guards/auth.guard';
+import { publicOnlyGuard } from './guards/public-only.guard';
 
 export const routes: Routes = [
   {
@@ -20,32 +17,31 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [roleGuard(['guest'])]
+    canActivate: [publicOnlyGuard]
   },
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
-    canActivate: [roleGuard(['guest'])]
+    canActivate: [publicOnlyGuard]
   },
   {
     path: 'welcome',
     component: WelcomeComponent,
-    canActivate: [roleGuard(['guest'])]
   },
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [authGuard, roleGuard(['user'])]
+    canActivate: [authGuard(['user'])]
   },
   {
     path: 'employee',
     component: EmployeeComponent,
-    canActivate: [authGuard, roleGuard(['employee'])]
+    canActivate: [authGuard(['employee'])]
   },
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [authGuard, roleGuard(['admin'])]
+    canActivate: [authGuard(['admin'])]
   },
   {
     path: '**',

@@ -1,36 +1,81 @@
 .department-card {
   background: white;
-  border: 2px solid rgb(var(--button--rgb),.5);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border: 2px solid rgba(var(--button--rgb), 0.2);
+  border-radius: 1rem;
+  padding: 2rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.department-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--accent), var(--accent2));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .department-card:hover {
-  border-color: rgb(var(--button--rgb),1);
-  background: rgb(var(--button--rgb),.1);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: rgba(var(--button--rgb), 0.4);
+}
+
+.department-card:hover::before {
+  opacity: 1;
 }
 
 .department-card.selected {
   border-color: var(--accent);
-  background: rgba(var(--accent--rgb), 0.1);
+  background: linear-gradient(to bottom right,
+  rgba(var(--accent--rgb), 0.05),
+  rgba(var(--accent--rgb), 0.02)
+  );
+  box-shadow: 0 8px 12px -3px rgba(var(--accent--rgb), 0.1);
+}
+
+.department-card.selected::before {
+  opacity: 1;
 }
 
 h3 {
-  margin: 0 0 1rem;
+  margin: 0 0 1.2rem;
   color: var(--accent);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 p {
-  margin: 0 0 1rem;
-  color: #666;
+  margin: 0 0 1.5rem;
+  color: #4a5568;
+  line-height: 1.6;
 }
 
 .contact-info {
   display: flex;
   flex-direction: column;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+  color: #718096;
+}
+
+.contact-info span {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
-  font-size: 0.875rem;
-  color: #666;
+}
+
+.contact-info span::before {
+  content: '•';
+  color: var(--accent);
 }

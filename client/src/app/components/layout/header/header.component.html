@@ -3,22 +3,24 @@
     @if (!isLoggedIn()) {
       <a routerLink="/welcome" routerLinkActive="active">Головна</a>
     }
-    @if (userRole() === 'employee') {
-      <a routerLink="/employee" routerLinkActive="active">Сторінка працівника</a>
-    }
-    @if (userRole() === 'admin') {
-      <a routerLink="/admin" routerLinkActive="active">Сторінка адміністратора</a>
-    }
-    @if (userRole() === 'user') {
-      <a routerLink="/dashboard" routerLinkActive="active">Дашборд</a>
-    }
   </nav>
   <div class="nav-panel">
     @if (isLoggedIn()) {
       <span class="user-greeting">Вітаємо, {{userFullName()}}!</span>
-      <button (click)="logout()" class="logout-btn">Вийти</button>
+      <button (click)="openLogoutModal()" class="logout-btn">Вийти</button>
     } @else {
       <button routerLink="/login" class="login-btn">Увійти</button>
     }
   </div>
 </header>
+
+<app-modal
+  [isVisible]="showLogoutModal"
+  [title]="'Підтвердження виходу'"
+  [message]="'Ви дійсно бажаєте вийти з системи?'"
+  [confirmText]="'Так, вийти'"
+  [cancelText]="'Скасувати'"
+  (confirm)="confirmLogout()"
+  (cancel)="closeLogoutModal()"
+>
+</app-modal>

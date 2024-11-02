@@ -15,7 +15,7 @@ public class CredentialsGeneratorService : ICredentialsGeneratorService
 
     public async Task<string> GenerateLogin(string firstName, string lastName)
     {
-        var transliteratedFirstName = TransliterateToLatin(firstName);
+        var transliteratedFirstName = TransliterateToLatin(firstName).Substring(0, 1);
         var transliteratedLastName = TransliterateToLatin(lastName);
 
         var random = new Random();
@@ -25,7 +25,7 @@ public class CredentialsGeneratorService : ICredentialsGeneratorService
         do
         {
             randomNumbers = random.Next(1000, 9999);
-            login = $"{transliteratedFirstName.ToLower()}_{transliteratedLastName.ToLower()}_{randomNumbers}";
+            login = $"{transliteratedFirstName.ToLower()}_{transliteratedLastName.ToLower()}{randomNumbers}";
         } while (await _userManager.FindByNameAsync(login) != null);
 
         return login;

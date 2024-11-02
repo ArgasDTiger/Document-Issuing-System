@@ -33,11 +33,10 @@ app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
-// Uncomment when you need seeding
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     await Seed.SeedAsync(services);
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await Seed.SeedAsync(services);
+}
 
 app.Run();

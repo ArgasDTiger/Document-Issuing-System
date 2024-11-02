@@ -3,19 +3,13 @@ import { UserService } from "../../services/user.service";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { User } from "../../models/user";
-import {BehaviorSubject, debounceTime, distinctUntilChanged, forkJoin, switchMap} from "rxjs";
+import {BehaviorSubject, debounceTime, distinctUntilChanged, finalize, switchMap} from "rxjs";
 import {AddUserComponent} from "./add-user/add-user.component";
 import {DepartmentService} from "../../services/department.service";
 import {Department} from "../../models/department";
 import {FormsModule} from "@angular/forms";
-
-interface RoleChangeModal {
-  show: boolean;
-  userId: string;
-  newRole: string;
-  departments?: Department[];
-  selectedDepartment?: string;
-}
+import {ModalComponent} from "../modal/modal.component";
+import {RoleChangeModal} from "../../models/role-change-modal";
 
 @Component({
   selector: 'app-admin',
@@ -25,7 +19,8 @@ interface RoleChangeModal {
     NgForOf,
     NgIf,
     AddUserComponent,
-    FormsModule
+    FormsModule,
+    ModalComponent
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
@@ -35,14 +30,14 @@ export class AdminComponent {
   private departmentService = inject(DepartmentService);
 
   departments = signal<Department[]>([]);
-  hoveredUserId = signal<string | null>(null);
 
   roleChangeModal = signal<RoleChangeModal>({
     show: false,
     userId: '',
     newRole: '',
     departments: [],
-    selectedDepartment: ''
+    selectedDepartment: '',
+    isLoading: false
   });
 
   selectedDepartment = '';
@@ -58,6 +53,7 @@ export class AdminComponent {
     roleFilter: 'all',
     departmentFilter: 'all',
     sortField: '',
+    sortOrder: 'asc',
     pageNumber: 1,
     pageSize: 10
   });
@@ -75,7 +71,7 @@ export class AdminComponent {
       switchMap(filter =>
         this.userService.getAllUsers(
           filter.sortField,
-          undefined,
+          filter.sortOrder,
           filter.search,
           { pageNumber: filter.pageNumber, pageSize: filter.pageSize }
         )
@@ -105,11 +101,22 @@ export class AdminComponent {
   hasNextPage = computed(() => this.users().hasNext);
   hasPreviousPage = computed(() => this.users().hasPrevious);
 
+  onSortDirectionChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const sortDirection = select.value;
+    this.updateFilterState({ sortOrder: sortDirection });
+  }
+
   onFilterChange(type: 'role' | 'department', value: string) {
     this.updateFilterState({
       [type === 'role' ? 'roleFilter' : 'departmentFilter']: value,
       pageNumber: 1
     });
+  }
+
+  onSortChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    this.updateFilterState({ sortField: select.value });
   }
 
   onSearchChange(event: Event) {
@@ -128,10 +135,6 @@ export class AdminComponent {
       ...this.filterState.value,
       ...update
     });
-  }
-
-  setHoveredUser(userId: string | null) {
-    this.hoveredUserId.set(userId);
   }
 
   async initiateRoleChange(userId: string, newRole: string) {
@@ -161,30 +164,58 @@ export class AdminComponent {
       return;
     }
 
-    const operations = [
-      this.userService.changeUserRole(modal.userId, modal.newRole)
-    ];
+    this.roleChangeModal.update(state => ({
+      ...state,
+      isLoading: true
+    }));
 
-    if (modal.newRole === 'Employee' && this.selectedDepartment) {
-      operations.push(
-        this.departmentService.changeDepartment({
-          userId: modal.userId,
-          departmentId: this.selectedDepartment
+    this.userService.changeUserRole(modal.userId, modal.newRole)
+      .pipe(
+        finalize(() => {
+          this.roleChangeModal.update(state => ({
+            ...state,
+            isLoading: false
+          }));
         })
-      );
-    }
+      )
+      .subscribe({
+        next: () => {
+          if (modal.newRole === 'Employee' && this.selectedDepartment) {
+            this.departmentService.changeDepartment({
+              userId: modal.userId,
+              departmentId: this.selectedDepartment
+            }).subscribe({
+              next: () => {
+                this.onRoleChangeSuccess();
+              },
+              error: (error) => {
+                console.error('Error changing department:', error);
+                alert('Помилка при зміні відділу користувача');
+              }
+            });
+          } else {
+            this.onRoleChangeSuccess();
+          }
+        },
+        error: (error) => {
+          console.error('Error changing user role:', error);
+          alert('Помилка при зміні ролі користувача');
+        }
+      });
+  }
 
-    forkJoin(operations).subscribe({
-      next: () => {
-        this.roleChangeModal.set({ show: false, userId: '', newRole: '' });
-        this.selectedDepartment = '';
-        this.filterState.next(this.filterState.value);
-      },
-      error: (error) => {
-        console.error('Error changing user role or department:', error);
-        alert('Помилка при зміні ролі або відділу користувача');
-      }
+  private onRoleChangeSuccess() {
+    this.roleChangeModal.set({
+      show: false,
+      userId: '',
+      newRole: '',
+      isLoading: false
     });
+    this.selectedDepartment = '';
+
+    setTimeout(() => {
+      this.filterState.next({...this.filterState.value});
+    }, 0);
   }
 
   cancelRoleChange() {

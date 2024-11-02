@@ -3,13 +3,15 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "../../../services/auth.service";
 import { PasswordResetService } from "../../../services/password-reset.service";
-import {LoginCredentials} from "../../../models/login-credentials";
+import { LoginCredentials } from "../../../models/login-credentials";
+import { NgClass } from "@angular/common";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgClass
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -40,25 +42,31 @@ export class LoginComponent {
       this.isLoading.set(true);
       this.errorMessage.set('');
 
-      // Create properly typed credentials object
       const credentials: LoginCredentials = {
         userLogin: this.loginForm.get('userLogin')?.value || '',
         password: this.loginForm.get('password')?.value || ''
       };
 
       this.authService.login(credentials).subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.router.navigate(['/']);
+        next: (response) => {
+          if (response) {
+            this.isLoading.set(false);
+            this.router.navigate(['/']);
+          }
         },
         error: (error) => {
           this.isLoading.set(false);
-          this.errorMessage.set(error.error?.message || 'Помилка входу');
+          if (error instanceof Error) {
+            this.errorMessage.set(error.message);
+          } else {
+            this.errorMessage.set('Помилка входу в систему');
+          }
         }
       });
+    } else {
+      this.errorMessage.set('Будь ласка, заповніть всі обов\'язкові поля');
     }
   }
-
 
   onRecoverySubmit() {
     if (this.recoveryForm.valid) {
@@ -72,10 +80,8 @@ export class LoginComponent {
           this.successMessage.set(response.message || 'На вашу електронну пошту надіслано посилання для відновлення паролю.');
           this.isLoading.set(false);
 
-          // Очищаємо форму
           this.recoveryForm.reset();
 
-          // Повертаємось до форми входу через 3 секунди
           setTimeout(() => {
             this.showRecovery.set(false);
             this.successMessage.set('');
@@ -98,5 +104,9 @@ export class LoginComponent {
     this.showRecovery.set(false);
     this.resetMessages();
     this.recoveryForm.reset();
+  }
+
+  togglePassword() {
+    this.showPassword.set(!this.showPassword());
   }
 }

@@ -5,6 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {RequestDocument} from "../models/request-document";
 import {CompleteDocument} from "../models/complete-document";
 import {Document} from "../models/document";
+import {tap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,17 @@ export class DocumentService {
   }
 
   getMyDocuments(): Observable<Document[]> {
-    return this.http.get<Document[]>(`${this.baseUrl}/my-documents`);
+    return this.http.get<Document[]>(`${this.baseUrl}/my-documents`).pipe(
+      tap(docs => {
+        docs.forEach(doc => console.log('Document name:', doc.documentName));
+      }),
+      map(docs => docs.map(doc => ({
+        ...doc,
+        status: doc.status || 'No operations',
+        requestDate: doc.requestDate ? new Date(doc.requestDate) : null,
+        receivedDate: doc.receivedDate ? new Date(doc.receivedDate) : null
+      })))
+    );
   }
 
   requestDocument(login: string, documentId: string): Observable<any> {

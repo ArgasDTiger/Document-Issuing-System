@@ -2,13 +2,14 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PasswordResetService } from '../../../services/password-reset.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.css'
+  styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -24,10 +25,7 @@ export class ResetPasswordComponent implements OnInit {
   successMessage = signal('');
 
   resetPasswordForm = this.fb.group({
-    password: ['', [
-      Validators.required,
-      Validators.minLength(8),
-    ]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required]
   });
 
@@ -76,15 +74,15 @@ export class ResetPasswordComponent implements OnInit {
         token: this.token,
         newPassword: newPassword as string
       }).subscribe({
-        next: (response) => {
-          this.successMessage.set(response.message || 'Пароль успішно змінено');
+        next: () => {
+          this.successMessage.set('Пароль успішно змінено! Перенаправлення на сторінку входу...');
           this.isLoading.set(false);
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 2000);
         },
         error: (error) => {
-          this.errorMessage.set(error.error?.message || 'Помилка при зміні паролю');
+          this.errorMessage.set(error.error?.message || 'Помилка при зміні паролю. Спробуйте ще раз.');
           this.isLoading.set(false);
         }
       });

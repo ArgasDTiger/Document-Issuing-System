@@ -15,19 +15,35 @@
           <option value="User">Користувач</option>
           <option value="Employee">Працівник</option>
         </select>
-        <select (change)="onFilterChange('department', $event.target.value)">
-          <option value="all">Всі відділи</option>
-          <option value="personal">Особисті</option>
-          <option value="finance">Фінанси</option>
+        <select (change)="onSortChange($event)">
+          <option value="">Сортувати за...</option>
+          <option value="firstName">Ім'ям</option>
+          <option value="lastName">Прізвище</option>
+          <option value="dateOfBirth">Датою народження</option>
+          <option value="email">Поштою</option>
+          <option value="department">Відділом</option>
+        </select>
+        <select (change)="onSortDirectionChange($event)">
+          <option value="asc">За зростанням</option>
+          <option value="desc">За спаданням</option>
         </select>
       </div>
+
+      <button class="action-button add-user-button" (click)="showAddUserModal.set(true)">
+        Додати користувача
+      </button>
     </div>
+
     <div class="table-container">
       <table>
         <thead>
         <tr>
           <th>Логін</th>
-          <th>ПІБ</th>
+          <th>Ім'я</th>
+          <th>Прізвище</th>
+          <th>По-батькові</th>
+          <th>Пошта</th>
+          <th>Дата народження</th>
           <th>Роль</th>
           <th>Відділ</th>
           <th>Дії</th>
@@ -37,7 +53,11 @@
           @for (user of filteredUsers(); track user.id) {
             <tr>
               <td>{{ user.login }}</td>
-              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.firstName }}</td>
+              <td>{{ user.lastName }}</td>
+              <td>{{ user.middleName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.dateOfBirth | date: 'dd/MM/yyyy' }}</td>
               <td>{{ translateRole(user.role) }}</td>
               <td class="department-cell">
                 @if (user.role === 'Employee') {
@@ -81,12 +101,13 @@
         </tbody>
       </table>
     </div>
+
     <div class="pagination">
       <button
         [disabled]="!hasPreviousPage()"
         (click)="onPageChange(currentPage() - 1)"
       >
-        &lt;-
+        &lt;
       </button>
       @for (page of [].constructor(totalPages()); track $index) {
         <button
@@ -100,18 +121,25 @@
         [disabled]="!hasNextPage()"
         (click)="onPageChange(currentPage() + 1)"
       >
-        -&gt;
+        &gt;
       </button>
     </div>
-  </section>
 
-  @if (roleChangeModal().show) {
-    <div class="modal-overlay">
-      <div class="modal">
-        <h2>Підтвердження зміни ролі</h2>
+    @if (roleChangeModal().show) {
+      <app-modal
+        [isVisible]="roleChangeModal().show"
+        [title]="'Підтвердження зміни ролі'"
+        [message]="roleChangeModal().newRole === 'Employee'
+      ? 'Оберіть відділ для нового працівника:'
+      : 'Ви впевнені, що хочете змінити роль цього користувача на звичайного користувача?'"
+        [confirmText]="'Підтвердити'"
+        [cancelText]="'Скасувати'"
+        [isConfirmDisabled]="roleChangeModal().newRole === 'Employee' && !selectedDepartment"
+        (confirm)="confirmRoleChange()"
+        (cancel)="cancelRoleChange()"
+      >
         @if (roleChangeModal().newRole === 'Employee') {
           <div class="department-selection">
-            <p>Оберіть відділ для нового працівника:</p>
             <select [(ngModel)]="selectedDepartment">
               <option value="">Оберіть відділ</option>
               @for (dept of roleChangeModal().departments; track dept.id) {
@@ -119,23 +147,14 @@
               }
             </select>
           </div>
-        } @else {
-          <p>Ви впевнені, що хочете змінити роль цього користувача на звичайного користувача?</p>
-          <p>Користувач втратить доступ до відділу та пов'язані з ним можливості.</p>
         }
-        <div class="modal-actions">
-          <button
-            class="action-button"
-            (click)="confirmRoleChange()"
-            [disabled]="roleChangeModal().newRole === 'Employee' && !selectedDepartment"
-          >
-            Підтвердити
-          </button>
-          <button class="cancel-button" (click)="cancelRoleChange()">
-            Скасувати
-          </button>
-        </div>
-      </div>
-    </div>
-  }
+      </app-modal>
+    }
+    @if (showAddUserModal()) {
+      <app-add-user
+        (close)="showAddUserModal.set(false)"
+        (userAdded)="onUserAdded()"
+      ></app-add-user>
+    }
+  </section>
 </main>

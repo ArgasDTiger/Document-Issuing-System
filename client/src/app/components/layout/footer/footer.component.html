@@ -2,13 +2,13 @@
   <div class="footer-content">
     <div class="contacts-container">
       <h3>Контакти:</h3>
-      <div class="contact-section">
+      <div class="contact-section" *ngIf="personalReferences">
         <h4>Особисті довідки:</h4>
-        <span>+38 095 123 456 | personal gmail.com</span>
+        <span>{{ personalReferences.phoneNumber }} | {{ personalReferences.email }}</span>
       </div>
-      <div class="contact-section">
+      <div class="contact-section" *ngIf="financeDepartment">
         <h4>Фінанси:</h4>
-        <span>+38 050 123 456 | income gmail.com</span>
+        <span>{{ financeDepartment.phoneNumber }} | {{ financeDepartment.email }}</span>
       </div>
     </div>
     <div class="copyrite">

@@ -1,6 +1,7 @@
 using API.Dtos;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordGenerator;
 
@@ -21,7 +22,7 @@ public class UsersController : ControllerBase
         _credentialsGeneratorService = credentialsGeneratorService;
     }
 
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Employee")]
     [HttpGet]
     public async Task<ActionResult> GetAllUsers(
         [FromQuery] PaginationParameters pagination,
@@ -33,6 +34,7 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPost("add-user")]
     public async Task<ActionResult> AddUser(AddUserDto addUserDto)
     {
@@ -50,7 +52,7 @@ public class UsersController : ControllerBase
             return BadRequest(result.Errors);
         }
 
-        var emailSubject = "Your Account Information";
+        var emailSubject = "Створення облікового запису";
         var emailBody = $"Вітаю, {addUserDto.FirstName} {addUserDto.MiddleName},<br/><br/>" +
                         $"Ваш акаунт для отримання документів був успішно створений.<br/>" +
                         $"Логін: {addUserDto.Login}<br/>" +
@@ -62,7 +64,7 @@ public class UsersController : ControllerBase
         return Ok(new { Message = "User created successfully and email sent.", result.User });
     }
 
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpPost("change-role")]
     public async Task<IActionResult> ChangeUserRole([FromQuery] string userId, [FromQuery] string newRole)
     {
