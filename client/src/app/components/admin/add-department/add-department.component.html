@@ -1,0 +1,59 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal">
+    <h2>Додати новий відділ</h2>
+
+    <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+      @if (errorMessage()) {
+        <div class="error-message">{{ errorMessage() }}</div>
+      }
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="name"
+          placeholder="Назва"
+          [class.invalid]="isFieldInvalid('name')"
+          (blur)="onBlur('name')"
+        >
+        @if (departmentForm.get('name')?.errors?.['required'] && departmentForm.get('name')?.touched) {
+          <span class="validation-error">Назва обов'язкове</span>
+        }
+      </div>
+      <div class="form-group">
+        <input
+          type="text"
+          formControlName="phoneNumber"
+          placeholder="Номер телефону"
+          [class.invalid]="isFieldInvalid('phoneNumber')"
+          (blur)="onBlur('phoneNumber')"
+        >
+        @if (departmentForm.get('phoneNumber')?.errors?.['required'] && departmentForm.get('phoneNumber')?.touched) {
+          <span class="validation-error">Номер телефону обов'язковий</span>
+        }
+      </div>
+      <div class="form-group">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Електронна пошта"
+          [class.invalid]="isFieldInvalid('email')"
+          (blur)="onBlur('email')"
+        >
+        @if (departmentForm.get('email')?.errors?.['required'] && departmentForm.get('email')?.touched) {
+          <span class="validation-error">Електронна пошта обов'язкова</span>
+        }
+        @if (departmentForm.get('email')?.errors?.['email'] && departmentForm.get('email')?.touched) {
+          <span class="validation-error">Неправильна електронна пошта</span>
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="action-button" [disabled]="departmentForm.invalid || isSubmitting()">
+          Додати відділ
+        </button>
+        <button type="button" class="cancel-button" (click)="onCancel()">
+          Скасувати
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

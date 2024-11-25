@@ -1,4 +1,7 @@
+using API.Dtos;
 using API.Interfaces;
+using API.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace API.Services;
@@ -8,12 +11,14 @@ public class DepartmentService : IDepartmentService
     private readonly IUserRepository _userRepository;
     private readonly IDepartmentRepository _departmentRepository;
     private readonly UserManager<User> _userManager;
+    private readonly IMapper _mapper;
 
-    public DepartmentService(IUserRepository userRepository, IDepartmentRepository departmentRepository, UserManager<User> userManager)
+    public DepartmentService(IUserRepository userRepository, IDepartmentRepository departmentRepository, UserManager<User> userManager, IMapper mapper)
     {
         _userRepository = userRepository;
         _departmentRepository = departmentRepository;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     public async Task<bool> ChangeDepartment(string userId, Guid? departmentId)
@@ -53,5 +58,11 @@ public class DepartmentService : IDepartmentService
         {
             return false;
         }
+    }
+
+    public async Task<bool> AddDepartment(AddDepartmentDto addDepartmentDto)
+    {
+        _departmentRepository.Add(_mapper.Map<Department>(addDepartmentDto));
+        return await _departmentRepository.SaveAllAsync();
     }
 }

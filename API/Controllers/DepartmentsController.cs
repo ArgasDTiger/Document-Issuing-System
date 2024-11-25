@@ -47,5 +47,16 @@ public class DepartmentsController : ControllerBase
             ? Ok(new { Message = "User department updated successfully" })
             : BadRequest(new { Message = "Failed to update user department" });
     }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("add-department")]
+    public async Task<IActionResult> AddDepartment([FromBody] AddDepartmentDto addDepartmentDto)
+    {
+        var result = await _departmentService.AddDepartment(addDepartmentDto);
+
+        return result
+            ? Ok(new { Message = "Department added successfully" })
+            : BadRequest(new { Message = "Failed to add department" });
+    }
 
 }

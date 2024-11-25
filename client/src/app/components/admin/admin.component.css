@@ -75,7 +75,8 @@ h1 {
 .add-user-button {
   white-space: nowrap;
   margin-left: auto;
-  margin-top: 0.7em;
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
 }
 
 .table-container {

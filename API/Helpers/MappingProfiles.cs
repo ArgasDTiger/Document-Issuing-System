@@ -43,5 +43,8 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.ExpectedReceivingDate, opt => opt.MapFrom(src => src.ExpectedReceivingDate))
             .ForMember(dest => dest.ReceivedDate, opt => opt.MapFrom(src => src.ReceivedDate))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+        CreateMap<Department, AddDepartmentDto>().ReverseMap();
+
     }
 }

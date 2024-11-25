@@ -32,7 +32,7 @@ public class PasswordResetController : ControllerBase
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
         {
-            return Ok(new { Message = "If the email is already registered, you will receive a password reset link." });
+            return Ok(new { Message = "Якщо пошта вже зареєстрована у системі, незабаром ви отримаєте електронного листа." });
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -54,7 +54,7 @@ public class PasswordResetController : ControllerBase
 
         await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
 
-        return Ok(new { Message = "If the email exists in our system, you will receive a password reset link." });
+        return Ok(new { Message = "Якщо пошта вже зареєстрована у системі, незабаром ви отримаєте електронного листа." });
     }
 
     [HttpPost("validate-reset-token")]

@@ -27,11 +27,13 @@
           <option value="asc">За зростанням</option>
           <option value="desc">За спаданням</option>
         </select>
+        <button class="action-button add-user-button" (click)="showAddUserModal.set(true)">
+          Додати користувача
+        </button>
+        <button class="action-button add-user-button" (click)="showAddDepartmentModal.set(true)">
+          Створити відділ
+        </button>
       </div>
-
-      <button class="action-button add-user-button" (click)="showAddUserModal.set(true)">
-        Додати користувача
-      </button>
     </div>
 
     <div class="table-container">
@@ -153,8 +155,14 @@
     @if (showAddUserModal()) {
       <app-add-user
         (close)="showAddUserModal.set(false)"
-        (userAdded)="onUserAdded()"
+        (userAdded)="onAdded()"
       ></app-add-user>
+    }
+    @if (showAddDepartmentModal()) {
+      <app-add-department
+        (close)="showAddDepartmentModal.set(false)"
+        (departmentAdded)="onAdded()"
+      ></app-add-department>
     }
   </section>
 </main>

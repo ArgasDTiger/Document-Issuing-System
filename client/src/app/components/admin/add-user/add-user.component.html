@@ -55,10 +55,10 @@
           (blur)="onBlur('email')"
         >
         @if (userForm.get('email')?.errors?.['required'] && userForm.get('email')?.touched) {
-          <span class="validation-error">Email обов'язковий</span>
+          <span class="validation-error">Електронна пошта обов'язкова</span>
         }
         @if (userForm.get('email')?.errors?.['email'] && userForm.get('email')?.touched) {
-          <span class="validation-error">Невірний формат email</span>
+          <span class="validation-error">Неправильна електронна пошта</span>
         }
       </div>
 

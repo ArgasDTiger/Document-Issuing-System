@@ -10,6 +10,7 @@ import {Department} from "../../models/department";
 import {FormsModule} from "@angular/forms";
 import {ModalComponent} from "../modal/modal.component";
 import {RoleChangeModal} from "../../models/role-change-modal";
+import {AddDepartmentComponent} from "./add-department/add-department.component";
 
 @Component({
   selector: 'app-admin',
@@ -20,7 +21,8 @@ import {RoleChangeModal} from "../../models/role-change-modal";
     NgIf,
     AddUserComponent,
     FormsModule,
-    ModalComponent
+    ModalComponent,
+    AddDepartmentComponent
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
@@ -42,6 +44,7 @@ export class AdminComponent {
 
   selectedDepartment = '';
   showAddUserModal = signal(false);
+  showAddDepartmentModal = signal(false);
 
   private roleTranslations: { [key: string]: string } = {
     'User': 'Користувач',
@@ -238,7 +241,7 @@ export class AdminComponent {
     });
   }
 
-  onUserAdded() {
+  onAdded() {
     this.filterState.next(this.filterState.value);
   }
 }
